@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1749678934 source:c:\users\equipo\desktop\tp_contracampo_tacti\listasimplefunciones.c
+	"listaSimple.h"
+
+1749678934 c:\users\equipo\desktop\tp_contracampo_tacti\listasimple.h
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<time.h>
+
+1749679233 source:c:\users\equipo\desktop\tp_contracampo_tacti\main.c
+	<stdio.h>
+	<stdlib.h>
+
