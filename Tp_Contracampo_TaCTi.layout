@@ -7,19 +7,46 @@
 			<Cursor1 position="73" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="juegoPrincipal.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="12" zoom_2="0">
+	<File name="juegoPrincipal.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="6" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="458" topLine="8" />
+			<Cursor1 position="866" topLine="6" />
 		</Cursor>
 	</File>
-	<File name="apiHeader.h" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="8" zoom_2="0">
+	<File name="listaSimpleFunciones.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="293" topLine="0" />
+			<Cursor1 position="285" topLine="0" />
 		</Cursor>
+		<Folding>
+			<Collapse line="2" />
+			<Collapse line="6" />
+			<Collapse line="32" />
+			<Collapse line="67" />
+			<Collapse line="112" />
+			<Collapse line="162" />
+			<Collapse line="192" />
+			<Collapse line="206" />
+			<Collapse line="210" />
+		</Folding>
 	</File>
-	<File name="apiFunciones.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="6" zoom_2="0">
+	<File name="apiFunciones.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="6" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="585" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="2" />
+			<Collapse line="22" />
+			<Collapse line="43" />
+			<Collapse line="70" />
+		</Folding>
+	</File>
+	<File name="listaSimple.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1039" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="apiHeader.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="5" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="161" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

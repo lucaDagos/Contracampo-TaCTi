@@ -28,4 +28,10 @@ typedef struct{
     char tablero[TAM_TABLERO][TAM_TABLERO];
 } tPartida;
 
+void iniciarTablero(char tablero[][TAM_TABLERO]);
+void mostrarTablero(char tablero[][TAM_TABLERO]);
+char verificarGanador(char tablero[][TAM_TABLERO]);
+int puedeGanar(char tablero[][TAM_TABLERO], char, int*, int*);
+void movIA(char tablero[][TAM_TABLERO], char, int);
+
 #endif // JUEGOPRINCIPAL_H_INCLUDED

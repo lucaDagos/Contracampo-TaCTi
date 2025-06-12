@@ -35,6 +35,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="apiHeader.h" />
+		<Unit filename="juegoPrincipal.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="juegoPrincipal.h" />
 		<Unit filename="listaSimple.h" />
 		<Unit filename="listaSimpleFunciones.c">
