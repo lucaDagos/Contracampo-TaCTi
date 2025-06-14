@@ -1,5 +1,6 @@
 #include "juegoPrincipal.h"
 #include "listaSimple.h"
+
 int jugar(tLista *listaJugadores){
     listaCrear(listaJugadores);
     if(ingresarJugadores(listaJugadores) == ERROR){
@@ -9,6 +10,7 @@ int jugar(tLista *listaJugadores){
     imprimirLista(listaJugadores);
     return EXITO;
 }
+
 int ingresarJugadores(tLista *listaJugadores){
     char jugador[MAX_NOMBRE];
     int errores = 0;
@@ -43,6 +45,7 @@ void imprimirLista(tLista *lista){
         idx++;
     }
 }
+
 //Recordar que este listaJugadores es un puntero al inicio, y que se manda por copia. Dejarlo localmente al final no te jode
 int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
     tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
@@ -62,9 +65,11 @@ int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
     *listaJugadores = nuevo;
     return EXITO;
 }
+
 void crearListaJugadores(tLista *lista){
     *lista = NULL;
 }
+
 void menu( char decision[MAX_NOMBRE]){
     printf("[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
     scanf("%s", decision);
@@ -73,12 +78,14 @@ void menu( char decision[MAX_NOMBRE]){
         scanf("%s", decision);
     }
 }
+
 bool validacionDecision(char decision[]){
     if(strcmp(decision,"A")==0 || strcmp(decision,"B")==0 || strcmp(decision,"C")==0){
         return true;
     }else
         return false;
 }
+
 void inicializarTablero(char tablero[][TAM_TABLERO]){
     for(int i = 0; i < TAM_TABLERO; i++){
         for(int j = 0; j < TAM_TABLERO; j++){
@@ -194,4 +201,22 @@ void movIA(char tablero[TAM_TABLERO][TAM_TABLERO], char letraIA, int dificultad)
     tablero[fila][columna] = letraIA;
 
     return;
+}
+
+int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configuracion){
+
+    char cadena[TAM_CADENA_ARCH];
+
+    FILE* arch = fopen(ruta_arch, "rt");
+    if(!arch) return ERROR;
+
+    fgets(cadena,TAM_CADENA_ARCH,arch);
+    sscanf(cadena,"%[^|]|%[^\n]",configuracion->urlApi,configuracion->codIdenGrupo);
+
+    fgets(cadena,TAM_TABLERO,arch);
+    sscanf(cadena,"%d",&configuracion->CantPartidas);
+
+    fclose(arch);
+
+    return EXITO;
 }

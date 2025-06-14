@@ -48,6 +48,9 @@ void mostrarTablero(char tablero[][TAM_TABLERO]);
 char verificarGanador(char tablero[][TAM_TABLERO]);
 int puedeGanar(char tablero[][TAM_TABLERO], char, int*, int*);
 void movIA(char tablero[][TAM_TABLERO], char, int);
+
+int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configuracion);
+
 //////////////////////////////////////////////////////////////
 
 
