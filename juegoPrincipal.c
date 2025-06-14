@@ -1,5 +1,84 @@
 #include "juegoPrincipal.h"
+#include "listaSimple.h"
+int jugar(tLista *listaJugadores){
+    listaCrear(listaJugadores);
+    if(ingresarJugadores(listaJugadores) == ERROR){
+        printf("hubo un error en la carga\n");
+        return ERROR;
+    }
+    imprimirLista(listaJugadores);
+    return EXITO;
+}
+int ingresarJugadores(tLista *listaJugadores){
+    char jugador[MAX_NOMBRE];
+    int errores = 0;
+    do{
+        printf("Ingrese los nombres de los jugadores(ingrese 'c' para terminar con la carga):\n");
+        scanf("%s", jugador);
+        if(strcmp(jugador, "c") ==0){
+            return EXITO;
+        }
+        errores = insertarJugadorEnLista(listaJugadores, jugador);
+    }while(errores == 0);
 
+
+    if(errores > 0){
+        return ERROR;
+    }
+    return EXITO;
+}
+
+void imprimirLista(tLista *lista){
+    if(*lista == NULL){
+        printf("lista vacia");
+        return;
+    }
+    //Aca hacemos esto para ahorrarnos desreferencias (*)
+    tNodo *aux = *lista;
+    int idx = 0;
+
+    while(aux) {
+        printf("  [%2d] %s\n", idx, (char*)aux->info);
+        aux = aux->sig;
+        idx++;
+    }
+}
+//Recordar que este listaJugadores es un puntero al inicio, y que se manda por copia. Dejarlo localmente al final no te jode
+int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
+    tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
+    if(!nuevo){
+        printf("Error al asignar memoria para un nodo nuevo");
+        return ERROR;
+    }
+
+    nuevo->info = malloc(MAX_NOMBRE-1);
+    memcpy(nuevo->info, jugador, MAX_NOMBRE - 1);
+    nuevo->tamInfo = MAX_NOMBRE - 1;
+    nuevo->sig = NULL;
+
+    while(*listaJugadores) {
+        listaJugadores = &(*listaJugadores)->sig;
+    }
+    *listaJugadores = nuevo;
+    return EXITO;
+}
+void crearListaJugadores(tLista *lista){
+    *lista = NULL;
+}
+void menu( char decision[MAX_NOMBRE]){
+    printf("[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
+    scanf("%s", decision);
+    while(validacionDecision(decision) == false){
+        printf("ingrese una opcion correcta: \n");
+        scanf("%s", decision);
+    }
+}
+bool validacionDecision(char decision[]){
+    if(strcmp(decision,"A")==0 || strcmp(decision,"B")==0 || strcmp(decision,"C")==0){
+        return true;
+    }else
+        return false;
+}
 void inicializarTablero(char tablero[][TAM_TABLERO]){
     for(int i = 0; i < TAM_TABLERO; i++){
         for(int j = 0; j < TAM_TABLERO; j++){

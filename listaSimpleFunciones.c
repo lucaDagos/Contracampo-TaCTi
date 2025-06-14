@@ -35,14 +35,14 @@ int listaInsertarAlFinal(tLista* l,void* elem,unsigned tamElem){
     tNodo* nuevo= malloc(sizeof(tNodo));
 
     if(!nuevo)
-        return ERROR;
+        return ERROR_LISTA;
 
     nuevo->info= malloc(tamElem);
 
     if(!nuevo->info)
     {
         free(nuevo);
-        return ERROR;
+        return ERROR_LISTA;
     }
 
     memcpy(nuevo->info, elem, tamElem);
@@ -74,7 +74,7 @@ int listaInsertarEnPosAleatoria(tLista* l, int limite, void* elem, unsigned tamE
     while(*lb)
     {
         if(!cmp((*lb)->info, elem)){
-            return ERROR;
+            return ERROR_LISTA;
         }
 
         lb = &(*lb)->sig;
@@ -191,9 +191,7 @@ int ordenarLista(tLista* l, int (*cmp)(const void*,const void*)){
 }
 
 void listaVaciar(tLista* l){
-
     tNodo *elim;
-
     while(*l)
     {
         elim = *l;
@@ -201,9 +199,7 @@ void listaVaciar(tLista* l){
         free(elim->info);
         free(elim);
     }
-
 }
-
 int listaVacia(tLista* l){
     return (!*l) ? 1 : 0;
 }

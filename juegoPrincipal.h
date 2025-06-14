@@ -2,9 +2,14 @@
 #define JUEGOPRINCIPAL_H_INCLUDED
 
 #include <stdio.h>
-
+#include <string.h>
+#include <stdbool.h>
 #include "listaSimple.h"
 #include "apiHeader.h"
+
+#define MAX_NOMBRE 50
+#define ERROR 1
+#define EXITO 0
 
 #define TAM_TABLERO 3
 #define TAM_CADENA_ARCH 100
@@ -28,10 +33,22 @@ typedef struct{
     char tablero[TAM_TABLERO][TAM_TABLERO];
 } tPartida;
 
+typedef tNodo* tLista;
+int jugar();
+int ingresarJugadores(tLista *listaJugadores);
+void crearListaJugadores(tLista *lista);
+int insertarJugadorEnLista(tLista *listaJugadores, char* jugador);
+bool validacionDecision(char decision[]);
+void menu( char decision[MAX_NOMBRE]);
+void imprimirLista(tLista* lista);
+
+
 void iniciarTablero(char tablero[][TAM_TABLERO]);
 void mostrarTablero(char tablero[][TAM_TABLERO]);
 char verificarGanador(char tablero[][TAM_TABLERO]);
 int puedeGanar(char tablero[][TAM_TABLERO], char, int*, int*);
 void movIA(char tablero[][TAM_TABLERO], char, int);
+//////////////////////////////////////////////////////////////
+
 
 #endif // JUEGOPRINCIPAL_H_INCLUDED

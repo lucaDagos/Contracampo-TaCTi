@@ -10,7 +10,7 @@
 #define LIMITE_ALCANZADO 3
 #define ERROR_MEM 2
 #define ERROR_ARCH 3
-#define ERROR 0
+#define ERROR_LISTA 0
 
 typedef struct sNodo{
     void* info;
