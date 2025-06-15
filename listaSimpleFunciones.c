@@ -200,6 +200,7 @@ void listaVaciar(tLista* l){
         free(elim);
     }
 }
+
 int listaVacia(tLista* l){
     return (!*l) ? 1 : 0;
 }

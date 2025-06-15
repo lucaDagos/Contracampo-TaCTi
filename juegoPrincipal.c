@@ -3,9 +3,9 @@
 
 int jugar(tLista *listaJugadores){
     listaCrear(listaJugadores);
-    if(ingresarJugadores(listaJugadores) == ERROR){
+    if(ingresarJugadores(listaJugadores) == HAY_ERROR){
         printf("hubo un error en la carga\n");
-        return ERROR;
+        return HAY_ERROR;
     }
     imprimirLista(listaJugadores);
     return EXITO;
@@ -25,7 +25,7 @@ int ingresarJugadores(tLista *listaJugadores){
 
 
     if(errores > 0){
-        return ERROR;
+        return HAY_ERROR;
     }
     return EXITO;
 }
@@ -51,7 +51,7 @@ int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
     tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
     if(!nuevo){
         printf("Error al asignar memoria para un nodo nuevo");
-        return ERROR;
+        return HAY_ERROR;
     }
 
     nuevo->info = malloc(MAX_NOMBRE-1);
@@ -208,7 +208,7 @@ int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configurac
     char cadena[TAM_CADENA_ARCH];
 
     FILE* arch = fopen(ruta_arch, "rt");
-    if(!arch) return ERROR;
+    if(!arch) return HAY_ERROR;
 
     fgets(cadena,TAM_CADENA_ARCH,arch);
     sscanf(cadena,"%[^|]|%[^\n]",configuracion->urlApi,configuracion->codIdenGrupo);
@@ -220,3 +220,29 @@ int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configurac
 
     return EXITO;
 }
+
+
+// Crea una lista (limitada) para el ranking
+int obtenerRanking(tLista* lista, tConfiguracion* configuracion){
+
+    CURLcode res;
+    tJugadorAPI jugador;
+    tRespuesta resAPI = {NULL, 0};
+    char pathGet[TAM_CADENA_ARCH];
+
+    snprintf(pathGet, sizeof(pathGet), "%s/%s", configuracion->urlApi, configuracion->codIdenGrupo);
+
+    res = peticionGET(&resAPI, pathGet);
+    if (res != CURLE_OK){
+        printf("Error en la solicitud a la API.\n");
+        return HAY_ERROR;
+    }
+    else{
+        while(parsearJugadores(&resAPI, &jugador))
+            insertarOrdenadoLimitado(lista, LIMITE_RANKING, &jugador, sizeof(tJugadorAPI), compararJugAPI);
+    }
+    free(resAPI.info);
+    return TODO_OK;
+}
+
+

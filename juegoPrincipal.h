@@ -8,13 +8,12 @@
 #include "apiHeader.h"
 
 #define MAX_NOMBRE 50
-#define ERROR 1
+#define HAY_ERROR 1
 #define EXITO 0
 
 #define TAM_TABLERO 3
 #define TAM_CADENA_ARCH 100
 #define TAM_CADENA 100
-#define TAM_MAX_JSON 200
 
 typedef struct{
     char urlApi[TAM_CADENA_ARCH];
@@ -52,6 +51,8 @@ void movIA(char tablero[][TAM_TABLERO], char, int);
 int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configuracion);
 
 //////////////////////////////////////////////////////////////
+
+int obtenerRanking(tLista*, tConfiguracion*);
 
 
 #endif // JUEGOPRINCIPAL_H_INCLUDED

@@ -12,37 +12,37 @@
 	<stdio.h>
 	<stdlib.h>
 
-1749681599 source:c:\users\equipo\desktop\contracampo-tacti\apifunciones.c
+1749956965 source:c:\users\equipo\desktop\contracampo-tacti\apifunciones.c
 	"apiHeader.h"
 
-1749680020 c:\users\equipo\desktop\contracampo-tacti\apiheader.h
+1749957074 c:\users\equipo\desktop\contracampo-tacti\apiheader.h
 	"listaSimple.h"
 	"juegoPrincipal.h"
 	<stdio.h>
 	<curl/curl.h>
 	<string.h>
 
-1749921890 c:\users\equipo\desktop\contracampo-tacti\listasimple.h
+1749945787 c:\users\equipo\desktop\contracampo-tacti\listasimple.h
 	<stdlib.h>
 	<stdio.h>
 	<string.h>
 	<time.h>
 
-1749924241 c:\users\equipo\desktop\contracampo-tacti\juegoprincipal.h
+1749956616 c:\users\equipo\desktop\contracampo-tacti\juegoprincipal.h
 	<stdio.h>
 	<string.h>
 	<stdbool.h>
 	"listaSimple.h"
 	"apiHeader.h"
 
-1749924241 source:c:\users\equipo\desktop\contracampo-tacti\juegoprincipal.c
+1749956616 source:c:\users\equipo\desktop\contracampo-tacti\juegoprincipal.c
 	"juegoPrincipal.h"
 	"listaSimple.h"
 
-1749921890 source:c:\users\equipo\desktop\contracampo-tacti\listasimplefunciones.c
+1749956616 source:c:\users\equipo\desktop\contracampo-tacti\listasimplefunciones.c
 	"listaSimple.h"
 
-1749924252 source:c:\users\equipo\desktop\contracampo-tacti\main.c
+1749953470 source:c:\users\equipo\desktop\contracampo-tacti\main.c
 	"juegoPrincipal.h"
 	"listaSimple.h"
 

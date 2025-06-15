@@ -9,9 +9,9 @@ int main()
     menu(decisionJugador);
     if(strcmp(decisionJugador, "A")== 0){
 
-        if(jugar(&listaJugadores) == ERROR){
+        if(jugar(&listaJugadores) == HAY_ERROR){
             printf("Ocurrio un error al ingresar los jugadores \n");
-            return ERROR;
+            return HAY_ERROR;
         }
     }
 
