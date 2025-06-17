@@ -11,7 +11,7 @@ char tablero[TAM_TABLERO][TAM_TABLERO];
 //--FUNCIONES PRINCIPALES
 /////////////////////////////////////////////////////////////////////////////////////////////*/
 
-int jugar(tLista* listaJugadores, tLista* listaPartidas, char nombreArch[20]){
+int jugar(tLista* listaJugadores, tLista* listaPartidas, int cantPart){
 
     tJugador jugador;
 
@@ -28,7 +28,7 @@ int jugar(tLista* listaJugadores, tLista* listaPartidas, char nombreArch[20]){
         printf("primer jugador listo\n");
         while(!listaVacia(listaJugadores)){
             sacarPrincipioLista(listaJugadores, &jugador, sizeof(tJugador));
-            comienzaAJugar(&jugador, nombreArch, listaPartidas);
+            comienzaAJugar(&jugador, cantPart, listaPartidas);
         }
     }
     else{
@@ -64,12 +64,12 @@ void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido)
 
 }
 
-int comienzaAJugar(tJugador* jugador, char nombreArch[20], tLista* listaPartidas){
+int comienzaAJugar(tJugador* jugador, int cantPart, tLista* listaPartidas){
 
     int cantPartidas;
     int puntParcial;
     tCola colaDeTurnos;
-    cantPartidas = leerPartidasArch(nombreArch);
+    cantPartidas = cantPart;
 
     while(cantPartidas > 0){
 
@@ -275,33 +275,101 @@ int insertarJugadorEnLista(tLista* listaJugadores, char* nom_jug){
 //--LOGICA ARCHIVO CONFIGURACION
 /////////////////////////////////////////////////////////////////////////////////////////////*/
 
-int crearArchivoConfig(char nombreArch[20], int cantPartidas){
-    FILE *arch = fopen(nombreArch, "w");
+int crearArchivoConfig(char nombreArch[20]){
+
+    FILE* arch = fopen(nombreArch, "w");
     if(!arch){
-        printf("error al crear el archivo de configuracion\n");
-        return ERROR;
+        printf("Error al crear el archivo de configuración\n");
+        return HAY_ERROR;
     }
-    fprintf(arch, "numero_de_partidas=%d\n", cantPartidas);
+
+    tConfiguracion config;
+
+    strcpy(config.urlApi, "https://algoritmos-api.azurewebsites.net/api/TaCTi");
+    strcpy(config.codIdenGrupo, "estructura");
+    config.CantPartidas = 3;
+
+    fprintf(arch, "%s|", config.urlApi);
+    fprintf(arch, "%s\n", config.codIdenGrupo);
+    fprintf(arch, "%d", config.CantPartidas);
+
     fclose(arch);
+
     return EXITO;
 }
 
-int leerPartidasArch(char nombreArch[20]){
-    FILE *arch = fopen(nombreArch, "r");
-    char linea[100];
-    int partidas = -1;
+int modificarArchivoConfig(char nombreArch[20]){
+
+    FILE* arch = fopen(nombreArch, "r");
     if(!arch){
-        printf("error al crear el archivo de configuracion\n");
-        return ERROR;
+        printf("Error al abrir el archivo de configuracion\n");
+        return HAY_ERROR;
     }
-    fgets(linea, sizeof(linea), arch);
-    sscanf(linea, "numero_de_partidas=%d", &partidas);
+
+    tConfiguracion config;
+
+    // Leer datos actuales
+    fscanf(arch, "%[^|]|", config.urlApi);
+    fscanf(arch, "%[^\n]\n", config.codIdenGrupo);
+    fscanf(arch, "%d", &config.CantPartidas);
+
     fclose(arch);
-    if(partidas <= 0){
-        printf("valor invalido de numero de partidas: %d\n", partidas);
-        return ERROR;
+
+    int opcion;
+    char aux[TAM_CADENA];
+
+    do {
+        printf("\n--- Modificar Configuracion ---\n");
+        printf("1. URL de la API\n");
+        printf("2. Codigo de identificacion\n");
+        printf("3. Cantidad de partidas\n");
+        printf("0. Guardar y salir\n");
+        printf("Opcion: ");
+        scanf("%d", &opcion);
+        fflush(stdin);
+
+        switch(opcion){
+            case 1:
+                printf("Ingrese nueva URL: ");
+                fflush(stdin);
+                fgets(aux, sizeof(aux), stdin);
+                aux[strcspn(aux, "\n")] = 0;
+                strcpy(config.urlApi, aux);
+                break;
+            case 2:
+                printf("Ingrese nuevo codigo de identificacion: ");
+                fflush(stdin);
+                fgets(aux, sizeof(aux), stdin);
+                aux[strcspn(aux, "\n")] = 0;
+                strcpy(config.codIdenGrupo, aux);
+                break;
+            case 3:
+                printf("Ingrese nueva cantidad de partidas: ");
+                scanf("%d", &config.CantPartidas);
+                fflush(stdin);
+                break;
+            case 0:
+                printf("Guardando cambios...\n");
+                break;
+            default:
+                printf("Opción invalida\n");
+        }
+
+    } while(opcion != 0);
+
+    arch = fopen(nombreArch, "w");
+    if(!arch){
+        printf("Error al reescribir el archivo de configuracion\n");
+        return HAY_ERROR;
     }
-    return partidas;
+
+    fprintf(arch, "%s|", config.urlApi);
+    fprintf(arch, "%s\n", config.codIdenGrupo);
+    fprintf(arch, "%d", config.CantPartidas);
+
+    fclose(arch);
+
+    return EXITO;
 }
 
 ///////////////////////////////////////////////////////////*///////////////////////////////////
@@ -357,17 +425,26 @@ void imprimirLista(tLista *lista){
     }
 }
 
+void convertirAMayusculas(char str[]){
+    int i;
+    for (i = 0; i < strlen(str); i++) {
+        str[i] = toupper(str[i]);
+    }
+}
+
 void menu(char decision[MAX_NOMBRE]){
     printf("[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
     scanf("%s", decision);
+    convertirAMayusculas(decision);
     while(validacionDecision(decision) == false){
         printf("ingrese una opcion correcta: \n");
         scanf("%s", decision);
+        convertirAMayusculas(decision);
     }
 }
 
 bool validacionDecision(char decision[]){
-    if(strcmp(decision,"A")==0 || strcmp(decision,"B")==0 || strcmp(decision,"C")==0){
+    if( strcmp(decision,"A")==0 || strcmp(decision,"B")==0 || strcmp(decision,"C")==0 || strcmp(decision,"MODIFICARARCHIVO")==0 ){
         return true;
     }else
         return false;

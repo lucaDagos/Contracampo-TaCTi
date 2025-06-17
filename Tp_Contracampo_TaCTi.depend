@@ -29,21 +29,22 @@
 	<time.h>
 	<stdbool.h>
 
-1750166293 c:\users\equipo\desktop\contracampo-tacti\juegoprincipal.h
+1750180015 c:\users\equipo\desktop\contracampo-tacti\juegoprincipal.h
 	<stdio.h>
 	<string.h>
 	<stdbool.h>
+	<ctype.h>
 	"listaSimple.h"
 	"apiHeader.h"
 
-1750164544 source:c:\users\equipo\desktop\contracampo-tacti\juegoprincipal.c
+1750180303 source:c:\users\equipo\desktop\contracampo-tacti\juegoprincipal.c
 	"juegoPrincipal.h"
 	"listaSimple.h"
 
 1750141009 source:c:\users\equipo\desktop\contracampo-tacti\listasimplefunciones.c
 	"listaSimple.h"
 
-1750165944 source:c:\users\equipo\desktop\contracampo-tacti\main.c
+1750180015 source:c:\users\equipo\desktop\contracampo-tacti\main.c
 	"juegoPrincipal.h"
 	"informePartidas.h"
 	"listaSimple.h"

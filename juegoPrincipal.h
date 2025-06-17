@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "listaSimple.h"
 #include "apiHeader.h"
 
@@ -51,27 +52,29 @@ typedef struct{
 
 typedef tNodo* tLista;
 
-int jugar(tLista*, tLista*, char nombreArch[20]);
+int jugar(tLista* listaJugadores, tLista* listaPartidas, int cantPart);
 int ingresarJugadores(tLista *listaJugadores);
 void crearListaJugadores(tLista *lista);
 int insertarJugadorEnLista(tLista *listaJugadores, char* jugador);
 bool validacionDecision(char decision[]);
-void menu( char decision[MAX_NOMBRE]);
+void menu(char decision[MAX_NOMBRE]);
+void convertirAMayusculas(char str[]);
 void imprimirLista(tLista* lista);
 int barajarTurnos(tLista* lista);
-void intercambiar( void * a, void* b, size_t sizeElem);
+void intercambiar(void* a, void* b, size_t sizeElem);
 bool jugadorEstaListo();
 void normalizacionTexto(char* texto);
-int crearArchivoConfig(char[30], int);
+int crearArchivoConfig(char nombreArch[20]);
+int modificarArchivoConfig(char nombreArch[20]);
 int leerPartidasArch(char nombreArch[20]);
-int comienzaAJugar(tJugador*, char nombreArch[20], tLista*);
+int comienzaAJugar(tJugador* jugador, int cantPart, tLista* listaPartidas);
 void asignarFicha(int quienEmpieza);
 int generoColaTurnos(tCola* colaDeTurnos, int quienEmpieza);
 int determinarQuienEmpieza();
 void juegaUsuario();
 void juegaMaquina();
-bool esIngresoValido( int fila, int columna);
-void colocarFicha( int fila, int columna, char ficha);
+bool esIngresoValido(int fila, int columna);
+void colocarFicha(int fila, int columna, char ficha);
 char encontrarPosibleGanador();
 int calcularPuntaje(char posibleGanador);
 
