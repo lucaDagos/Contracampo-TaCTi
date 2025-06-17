@@ -35,6 +35,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="apiHeader.h" />
+		<Unit filename="informePartidas.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="informePartidas.h" />
 		<Unit filename="juegoPrincipal.c">
 			<Option compilerVar="CC" />
 		</Unit>

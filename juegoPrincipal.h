@@ -12,7 +12,6 @@
 #define EXITO 0
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
-#define N 3
 #define MAX_TURNOS 9
 #define TAM_TABLERO 3
 #define PUNTAJE_GANO_JUGADOR 3
@@ -24,8 +23,8 @@
 #define ES_MINUS(x) (x>=97 && x<=122)? 1 : 0
 #define ES_MAYUS(x) (x>=65 && x<=90)? 1 : 0
 
-
 typedef void (*TurnoFuncion)();
+
 typedef struct{
     char urlApi[TAM_CADENA_ARCH];
     char codIdenGrupo[TAM_CADENA];
@@ -33,24 +32,26 @@ typedef struct{
 } tConfiguracion;
 
 typedef struct{
-    char nombre[TAM_CADENA];
+    char nombre[MAX_NOMBRE];
     int puntaje;
 } tJugador;
 
 typedef struct{
-    char jugador[TAM_CADENA];
+    char jugador[MAX_NOMBRE];
     int puntajeObtenido;
     char tablero[TAM_TABLERO][TAM_TABLERO];
 } tPartida;
+
 typedef struct{
     TurnoFuncion info[MAX_TURNOS];
     int inicio;
     int fin;
     int tam;
 }tCola;
+
 typedef tNodo* tLista;
 
-int jugar(tLista *listaJugadores, char nombreArch[20]);
+int jugar(tLista*, tLista*, char nombreArch[20]);
 int ingresarJugadores(tLista *listaJugadores);
 void crearListaJugadores(tLista *lista);
 int insertarJugadorEnLista(tLista *listaJugadores, char* jugador);
@@ -63,7 +64,7 @@ bool jugadorEstaListo();
 void normalizacionTexto(char* texto);
 int crearArchivoConfig(char[30], int);
 int leerPartidasArch(char nombreArch[20]);
-int comienzaAJugar(char nombreJugador[MAX_NOMBRE] ,char nombreArch[20]);
+int comienzaAJugar(tJugador*, char nombreArch[20], tLista*);
 void asignarFicha(int quienEmpieza);
 int generoColaTurnos(tCola* colaDeTurnos, int quienEmpieza);
 int determinarQuienEmpieza();
@@ -88,6 +89,9 @@ int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configurac
 //////////////////////////////////////////////////////////////
 
 int obtenerRanking(tLista*, tConfiguracion*);
+int compararPuntajeTotal(const void*, const void*);
+int compararIgualdadPuntajeTotal(const void*, const void*);
+void enviarDatosListaAPI(tLista*, tConfiguracion*, void(*accion)(const void*, const void*));
 
 
 #endif // JUEGOPRINCIPAL_H_INCLUDED
