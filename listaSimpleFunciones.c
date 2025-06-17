@@ -201,8 +201,8 @@ void listaVaciar(tLista* l){
     }
 }
 
-int listaVacia(tLista* l){
-    return (!*l) ? 1 : 0;
+bool listaVacia(tLista* l){
+    return(*l == NULL);
 }
 
 void listaFuncionMap(tLista* l, void (*accion)(const void*,const void*)){
@@ -213,4 +213,30 @@ void listaFuncionMap(tLista* l, void (*accion)(const void*,const void*)){
         accion((*l)->info,&i);
         l=&(*l)->sig;
     }
+}
+int sacarPrincipioLista(tLista *lista, void *info, size_t tamInfo)
+{
+    tNodo *aux = *lista;
+    if(listaVacia(lista)) {
+        return ERROR_LISTA;
+    }
+
+    *lista = aux->sig;
+    memcpy(info, aux->info, MIN(tamInfo,aux->tamInfo));
+
+    free(aux->info);
+    free(aux);
+
+    return TODO_OK;
+}
+int obtenerTamanioLista(tLista *lista) {
+    int contador = 0;
+    tNodo *actual = *lista; // desreferenci�s el puntero para obtener el nodo inicial
+
+    while (actual != NULL) {
+        contador++;
+        actual = actual->sig;
+    }
+
+    return contador;
 }
