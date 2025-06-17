@@ -9,6 +9,8 @@ Al momento de inciar el juego, se despliega un menu donde indica al usuario dond
 
 [B] - Ver ranking equipo: obtiene el ranking de los equipos almacenados en la base de datos.
 
+[C] - Salir: Permite salir del juego.
+
 --------------------------------------------------------------------------------------------------
 [A] - Jugar:
 
@@ -25,3 +27,7 @@ Una vez jugados todos los jugadores, se envia el archivo a la base de datos para
 --------------------------------------------------------------------------------------------------
 [B] - Ver ranking equipo:
 
+--------------------------------------------------------------------------------------------------
+[C] - Salir:
+
+Permite al usuario dejar de jugar.
