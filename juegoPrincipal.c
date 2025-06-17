@@ -18,7 +18,6 @@ int jugar(tLista *listaJugadores, char nombreArch[20]){
         printf("hubo un error en la carga\n");
         return ERROR;
     }
-
     barajarTurnos(listaJugadores);
     imprimirLista(listaJugadores);
     if(jugadorEstaListo()){
@@ -49,13 +48,10 @@ int comienzaAJugar(char nombreJugador[MAX_NOMBRE] ,char nombreArch[20]){
         printf("Partidas restantes de %s:  %d\n", nombreJugador, cantPartidas);
         printf("%s comienza con '%c'\n", primero == COMIENZA_JUGADOR ? "Usuario" : "Maquina",
                primero == COMIENZA_JUGADOR ? simboloJugador : simboloMaquina);
-
-
         inicializarTablero();
         mostrarTablero();
-
         for(int i =0; i < MAX_TURNOS && encontrarPosibleGanador() == ' '; i++){
-            TurnoFuncion turno = desencolar(&colaDeTurnos);
+            PtrFuncion turno = desencolar(&colaDeTurnos);
             if(turno == NULL){
                 return ERROR;
             }
@@ -63,7 +59,6 @@ int comienzaAJugar(char nombreJugador[MAX_NOMBRE] ,char nombreArch[20]){
             mostrarTablero(tablero);
         }
         puntaje += calcularPuntaje(encontrarPosibleGanador());
-
         cantPartidas--;
     }
     printf("Jugador: %s           Puntaje: %d\n", nombreJugador, puntaje);
@@ -114,7 +109,92 @@ void juegaUsuario(){
     }
 }
 void juegaMaquina(){
+    tPila pilaDeMovimientos;
+    creoYllenoPilaMaquina(&pilaDeMovimientos);
+    while(!estaVacia(&pilaDeMovimientos)){
+        PtrMovInt movimiento = popPila(&pilaDeMovimientos);
+
+        if(movimiento() == MOV_REALIZADO){
+            return;
+        }
+    }
 }
+void creoYllenoPilaMaquina(tPila *pila){
+    crearPila(pila);
+    pushPila(pila, intentarGanarMaquina);
+    pushPila(pila, intentarBloquearMaquina);
+    pushPila(pila, ponerRandomMaquina);
+}
+
+int intentarGanarMaquina(){
+    int fila, columna;
+     if(puedeGanar(&fila, &columna, simboloMaquina)){
+        tablero[fila][columna] = simboloMaquina;
+        return MOV_REALIZADO;
+     }
+     return MOV_NO_REALIZADO;
+}
+int intentarBloquearMaquina() {
+    int fila, columna;
+     if(puedeGanar(&fila, &columna, simboloJugador)){
+        tablero[fila][columna] = simboloMaquina;
+        return MOV_REALIZADO;
+     }
+     return MOV_NO_REALIZADO;
+}
+int ponerRandomMaquina() {
+    int fila, columna;
+    do
+    {
+        fila = rand() % TAM_TABLERO;
+        columna = rand() % TAM_TABLERO;
+    }
+    while (tablero[fila][columna] != ' ');
+
+    tablero[fila][columna] = simboloMaquina;
+
+    return MOV_REALIZADO;
+}
+bool puedeGanar(int* fila, int* columna, char ficha){
+
+    for (int i = 0; i < TAM_TABLERO; i++)
+    {
+        for (int j = 0; j < TAM_TABLERO; j++)
+        {
+            if (tablero[i][j] == ' ')
+            {
+                tablero[i][j] = ficha;
+
+                if (encontrarPosibleGanador() == ficha)
+                {
+                    *fila = i;
+                    *columna = j;
+                    tablero[i][j] = ' ';
+                    return true;
+                }
+
+                tablero[i][j] = ' ';
+            }
+        }
+    }
+
+    return false;
+}
+
+/*
+int obtenerPosicionesLibres(int casillasLibres[][2]) {
+    int cantCasillasLibres = 0;
+    for (int i = 0; i < TAM_TABLERO; i++) {
+        for (int j = 0; j < TAM_TABLERO; j++) {
+            if (tablero[i][j] == ' ') {
+                casillasLibres[cantCasillasLibres][0] = i;
+                casillasLibres[cantCasillasLibres][1] = j;
+                cantCasillasLibres++;
+            }
+        }
+    }
+    return cantCasillasLibres;
+}*/
 bool esIngresoValido(int fila, int columna){
     if(fila < 0 || fila >= N || columna < 0 || tablero[fila][columna] != ' '){
         return false;
@@ -306,7 +386,7 @@ void crearCola(tCola *cola){
     cola->fin = -1;
     cola->tam = 0;
 }
-int encolar(tCola *cola, TurnoFuncion funcion)
+int encolar(tCola *cola, PtrFuncion funcion)
 {
     if(cola->tam ==  MAX_TURNOS){
         return 0;
@@ -316,16 +396,38 @@ int encolar(tCola *cola, TurnoFuncion funcion)
     cola->tam++;
     return EXITO;
 }
-TurnoFuncion desencolar(tCola *cola){
+PtrFuncion desencolar(tCola *cola){
     if(cola->tam == 0){
         return NULL;
     }
-    TurnoFuncion turno = cola->info[cola->inicio];
+    PtrFuncion turno = cola->info[cola->inicio];
     cola->inicio = (cola->inicio + 1) % MAX_TURNOS;
     cola->tam--;
     return turno;
 }
-
+///////////////////////////////////PILA FUNCIONES
+void crearPila(tPila *pila){
+    pila->tope = -1;
+}
+int estaLlena(tPila* pila){
+    return pila->tope == TAM_PILA -1;
+}
+int estaVacia(tPila* pila){
+    return pila->tope== -1;
+}
+int pushPila(tPila *pila, PtrMovInt funcion){
+    if(estaLlena(pila)){
+        return ERROR;
+    }
+    pila->info[++pila->tope] = funcion;
+    return EXITO;
+}
+PtrMovInt popPila(tPila *pila){
+    if(estaVacia(pila)){
+        return NULL;
+    }
+    return pila->info[pila->tope--];
+}
 ///////////////////////////////////////////////////////////////////////
 void inicializarTablero(){
     for(int i = 0; i < TAM_TABLERO; i++){
@@ -375,68 +477,5 @@ char encontrarPosibleGanador(){
 
     return ' ';
 }
-/*
-int puedeGanar(char tablero[][TAM_TABLERO], char jugador, int* fila, int* columna){
 
-    for (int i = 0; i < TAM_TABLERO; i++)
-    {
-        for (int j = 0; j < TAM_TABLERO; j++)
-        {
-            if (tablero[i][j] == ' ')
-            {
-                tablero[i][j] = jugador;
 
-                if (verificarGanador(tablero) == jugador)
-                {
-                    *fila = i;
-                    *columna = j;
-                    tablero[i][j] = ' ';
-                    return 1;
-                }
-
-                tablero[i][j] = ' ';
-            }
-        }
-    }
-
-    return 0;
-}
-
-void movIA(char tablero[TAM_TABLERO][TAM_TABLERO], char letraIA, int dificultad){
-
-    int fila, columna;
-    char letraJug;
-
-    (letraIA == 'X') ? (letraJug = 'O') : (letraJug = 'X');
-
-    if(dificultad == 1)
-    {
-        // si la IA puede ganar, lo hace. si no puede ganar, entonces bloquea al jugador.
-        if (puedeGanar(tablero, letraIA, &fila, &columna) || puedeGanar(tablero, letraJug, &fila, &columna))
-        {
-            tablero[fila][columna] = letraIA;
-            return;
-        }
-    }
-    else
-    {
-        // la IA solo verifica si puede ganar.
-        if (puedeGanar(tablero, letraIA, &fila, &columna))
-        {
-            tablero[fila][columna] = letraIA;
-            return;
-        }
-    }
-    //movimiento aleatorio si no se encuentra una jugada ganadora o de bloqueo
-    do
-    {
-        fila = rand() % TAM_TABLERO;
-        columna = rand() % TAM_TABLERO;
-    }
-    while (tablero[fila][columna] != ' ');
-
-    tablero[fila][columna] = letraIA;
-
-    return;
-}
-*/

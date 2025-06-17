@@ -18,13 +18,18 @@
 #define PUNTAJE_GANO_JUGADOR 3
 #define PUNTAJE_GANO_MAQUINA -1
 #define PUNTAJE_EMPATE 2
+#define TAM_PILA 3
 #define TAM_CADENA_ARCH 100
 #define TAM_CADENA 100
 #define TAM_MAX_JSON 200
+#define MOV_REALIZADO 1
+#define MOV_NO_REALIZADO -1
+
 #define ES_MINUS(x) (x>=97 && x<=122)? 1 : 0
 #define ES_MAYUS(x) (x>=65 && x<=90)? 1 : 0
 
-typedef void (*TurnoFuncion)();
+typedef void (*PtrFuncion)();
+typedef int (*PtrMovInt)();
 typedef struct{
     char urlApi[TAM_CADENA_ARCH];
     char codIdenGrupo[TAM_CADENA];
@@ -42,11 +47,15 @@ typedef struct{
     char tablero[TAM_TABLERO][TAM_TABLERO];
 } tPartida;
 typedef struct{
-    TurnoFuncion info[MAX_TURNOS];
+    PtrFuncion info[MAX_TURNOS];
     int inicio;
     int fin;
     int tam;
 }tCola;
+typedef struct{
+    PtrMovInt info[TAM_PILA];
+    size_t tope;
+}tPila;
 typedef tNodo* tLista;
 
 int jugar(tLista *listaJugadores, char nombreArch[20]);
@@ -72,18 +81,25 @@ bool esIngresoValido( int fila, int columna);
 void colocarFicha( int fila, int columna, char ficha);
 char encontrarPosibleGanador();
 int calcularPuntaje(char posibleGanador);
+bool puedeGanar(int* fila, int* columna, char ficha);
 
 void inicializarTablero();
 void mostrarTablero();
-int puedeGanar(char tablero[][TAM_TABLERO], char, int*, int*);
-void movIA(char tablero[][TAM_TABLERO], char, int);
-
+int intentarGanarMaquina();
+int intentarBloquearMaquina();
+int ponerRandomMaquina();
 
 //////////////////FUNCIONES COLA (PODRIA PASARSE A OTRO ARCHIVO COMO SE HACE CON LISTA)
 void crearCola(tCola *cola);
-int encolar(tCola *cola, TurnoFuncion funcion);
-TurnoFuncion desencolar(tCola *cola);
-//////////////////////////////////////////////////////////////
-
+int encolar(tCola *cola, PtrFuncion funcion);
+PtrFuncion desencolar(tCola *cola);
+//////////////////FUNCIONES PILA (PODRIA PASARSE A OTRO ARCHIVO COMO SE HACE CON LISTA)
+void crearPila(tPila *pila);
+int estaLlena(tPila* pila);
+int estaVacia(tPila*pila);
+int pushPila(tPila *pila, PtrMovInt funcion);
+void creoYllenoPilaMaquina(tPila *pila);
+PtrMovInt popPila(tPila *pila);
+void creoYllenoPilaMaquina(tPila *pila);
 
 #endif // JUEGOPRINCIPAL_H_INCLUDED
