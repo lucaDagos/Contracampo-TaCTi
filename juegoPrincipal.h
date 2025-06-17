@@ -8,7 +8,7 @@
 #include "apiHeader.h"
 
 #define MAX_NOMBRE 50
-#define ERROR 1
+#define HAY_ERROR 1
 #define EXITO 0
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
@@ -30,6 +30,8 @@
 
 typedef void (*PtrFuncion)();
 typedef int (*PtrMovInt)();
+
+
 typedef struct{
     char urlApi[TAM_CADENA_ARCH];
     char codIdenGrupo[TAM_CADENA];
@@ -103,5 +105,10 @@ int pushPila(tPila *pila, PtrMovInt funcion);
 void creoYllenoPilaMaquina(tPila *pila);
 PtrMovInt popPila(tPila *pila);
 void creoYllenoPilaMaquina(tPila *pila);
+//////////////////////////////////////////////////////////////
+
+int obtenerRanking(tLista*, tConfiguracion*);
+int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configuracion);
+
 
 #endif // JUEGOPRINCIPAL_H_INCLUDED

@@ -200,6 +200,7 @@ void listaVaciar(tLista* l){
         free(elim);
     }
 }
+
 bool listaVacia(tLista* l){
     return(*l == NULL);
 }
@@ -230,7 +231,7 @@ int sacarPrincipioLista(tLista *lista, void *info, size_t tamInfo)
 }
 int obtenerTamanioLista(tLista *lista) {
     int contador = 0;
-    tNodo *actual = *lista; // desreferenciás el puntero para obtener el nodo inicial
+    tNodo *actual = *lista; // desreferenciï¿½s el puntero para obtener el nodo inicial
 
     while (actual != NULL) {
         contador++;

@@ -43,6 +43,7 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp){
 
 CURLcode peticionGET(tRespuesta* respuesta, const char* path){
 
+    long codigoHTTP = 0;
     CURLcode res;
     CURL* curl;
     // Inicializar el manejo de curl
@@ -62,10 +63,26 @@ CURLcode peticionGET(tRespuesta* respuesta, const char* path){
 
     // Realizar la solicitud HTTP GET
     res = curl_easy_perform(curl);
+
+    if (res == CURLE_OK)
+    {
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &codigoHTTP);
+        printf("Codigo HTTP recibido: %ld\n", codigoHTTP);
+
+        if (codigoHTTP == 200) {
+            printf("La API respondio 200 OK\n");
+        } else if (codigoHTTP == 400) {
+            printf("La API respondio 400 Bad Request\n");
+        } else {
+            printf("La API respondio otro codigo: %ld\n", codigoHTTP);
+        }
+    } else
+    {
+        fprintf(stderr, "Error en la solicitud: %s\n", curl_easy_strerror(res));
+    }
     curl_easy_cleanup(curl);
     curl_global_cleanup();
     return res;
-
 }
 
 CURLcode peticionPOST(tRespuesta* respuesta, const char* pathUrl, const char* jsonData){
@@ -109,3 +126,93 @@ CURLcode peticionPOST(tRespuesta* respuesta, const char* pathUrl, const char* js
     return res;
 
 }
+
+// ------------------------------------------------------------
+
+// Parsear la informacion que se obtiene de la api
+int parsearJugadores(tRespuesta* res, tJugadorAPI* jugador){
+
+    char *p = strrchr(res->info, '}');
+
+    if(!p)
+    {
+        return 0;
+    }
+
+    p--;
+    *p = '\0';
+
+    p = strrchr(res->info, ',');
+    p = strchr(p, ':');
+    strcpy(jugador->fyh, p + 2);
+    p = strrchr(res->info, ',');
+
+    *p = '\0';
+    p = strrchr(res->info, ',');
+    p = strchr(p, ':');
+    sscanf(p + 1, "%u", &jugador->puntaje);
+    p = strrchr(res->info, ',');
+
+    p--;
+    *p = '\0';
+    p = strrchr(res->info, '{');
+    p = strchr(p, ':');
+    strcpy(jugador->nombre, p + 2);
+    p = strrchr(res->info, '{');
+
+    *p = '\0';
+
+    return 1;
+}
+
+// Se usa para mostrar los jugadores de la lista del ranking (posicion - jugador)
+void mostrarJugadorAPI(const void* a, const void* b){
+
+    tJugadorAPI* aa = (tJugadorAPI*) a;
+
+    int posicion = *(int*) b;
+
+    printf("| %-3d | %-15s | %-13d | %-20s |\n", posicion, aa->nombre, aa->puntaje, aa->fyh);
+}
+
+int compararFechaHora(const char* fyh1, const char* fyh2){
+
+    tFechaHora f1, f2;
+
+    sscanf(fyh1, "%2d/%2d/%4d %2d:%2d:%2d",
+           &f1.dia, &f1.mes, &f1.anio,
+           &f1.hora, &f1.minutos, &f1.segundos);
+
+    sscanf(fyh2, "%2d/%2d/%4d %2d:%2d:%2d",
+           &f2.dia, &f2.mes, &f2.anio,
+           &f2.hora, &f2.minutos, &f2.segundos);
+
+    int valores1[] = {f1.anio, f1.mes, f1.dia, f1.hora, f1.minutos, f1.segundos};
+    int valores2[] = {f2.anio, f2.mes, f2.dia, f2.hora, f2.minutos, f2.segundos};
+
+    for (int i = 0; i < 6; i++) {
+        if (valores1[i] != valores2[i])
+            return valores1[i] - valores2[i];
+    }
+
+    return 0;
+}
+
+// Comparar jugadores API segun Nombre, Puntaje (descendente) y Fecha/Hora (más reciente)
+int compararJugAPI(const void* a, const void* b){
+
+    tJugadorAPI* jugA = (tJugadorAPI*) a;
+    tJugadorAPI* jugB = (tJugadorAPI*) b;
+
+    int resultado = strcmp(jugA->nombre, jugB->nombre);  //Ascendente
+    if(resultado == 0){
+        resultado = jugB->puntaje - jugA->puntaje;  //Descendente
+        if(resultado == 0){
+            resultado = compararFechaHora(jugB->fyh, jugA->fyh);  //Descendente
+        }
+    }
+
+    return resultado;
+}
+
+
