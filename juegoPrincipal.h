@@ -75,20 +75,22 @@ int comienzaAJugar(char nombreJugador[MAX_NOMBRE] ,char nombreArch[20]);
 void asignarFicha(int quienEmpieza);
 int generoColaTurnos(tCola* colaDeTurnos, int quienEmpieza);
 int determinarQuienEmpieza();
+
 void juegaUsuario();
-void juegaMaquina();
 bool esIngresoValido( int fila, int columna);
+
 void colocarFicha( int fila, int columna, char ficha);
 char encontrarPosibleGanador();
 int calcularPuntaje(char posibleGanador);
-bool puedeGanar(int* fila, int* columna, char ficha);
 
-void inicializarTablero();
-void mostrarTablero();
+void juegaMaquina();
+bool puedeGanar(int* fila, int* columna, char ficha);
 int intentarGanarMaquina();
 int intentarBloquearMaquina();
 int ponerRandomMaquina();
 
+void inicializarTablero();
+void mostrarTablero();
 //////////////////FUNCIONES COLA (PODRIA PASARSE A OTRO ARCHIVO COMO SE HACE CON LISTA)
 void crearCola(tCola *cola);
 int encolar(tCola *cola, PtrFuncion funcion);
