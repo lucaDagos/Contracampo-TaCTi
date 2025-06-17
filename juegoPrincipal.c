@@ -5,18 +5,21 @@
 char simboloJugador;
 char simboloMaquina;
 char tablero[N][N];
+
 //REINICIAR TABLERO DESPUES DE CADA PARTIDA
 ///////////////////////////////////////////////////////////*///////////////////////////////////
 //--FUNCIONES PRINCIPALES
 /////////////////////////////////////////////////////////////////////////////////////////////*/
+
 int jugar(tLista *listaJugadores, char nombreArch[20]){
     char jugador[MAX_NOMBRE];
 
     //creo la lista de jujadores y le pido que ingrese el nombre de los que van a jugar
+  
     listaCrear(listaJugadores);
-    if(ingresarJugadores(listaJugadores) == ERROR){
+    if(ingresarJugadores(listaJugadores) == HAY_ERROR){
         printf("hubo un error en la carga\n");
-        return ERROR;
+        return HAY_ERROR;
     }
 
     barajarTurnos(listaJugadores);
@@ -33,9 +36,11 @@ int jugar(tLista *listaJugadores, char nombreArch[20]){
     }
     return EXITO;
 }
+
 ///////////////////////////////////////////////////////////*///////////////////////////////////
 //--LOGICA DE JUEGO
 /////////////////////////////////////////////////////////////////////////////////////////////*/
+
 int comienzaAJugar(char nombreJugador[MAX_NOMBRE] ,char nombreArch[20]){
     int cantPartidas;
     int puntaje = 0;
@@ -158,6 +163,7 @@ int barajarTurnos(tLista* lista){
     free(vectorDeJugadores);
     return EXITO;
 }
+
 void intercambiar( void * a, void* b, size_t sizeElem)
 {
     void*temp = malloc(sizeElem);
@@ -166,9 +172,11 @@ void intercambiar( void * a, void* b, size_t sizeElem)
     memcpy(b, temp, sizeElem);
     free(temp);
 }
+
 ///////////////////////////////////////////////////////////*///////////////////////////////////
 //--FUNCIONES CARGA DE JUGADORES
 /////////////////////////////////////////////////////////////////////////////////////////////*/
+
 int ingresarJugadores(tLista *listaJugadores){
     char jugador[MAX_NOMBRE];
     int errores = 0;
@@ -183,16 +191,17 @@ int ingresarJugadores(tLista *listaJugadores){
 
 
     if(errores > 0){
-        return ERROR;
+        return HAY_ERROR;
     }
     return EXITO;
 }
+
 //Recordar que este listaJugadores es un puntero al inicio, y que se manda por copia. Dejarlo localmente al final no te jode
 int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
     tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
     if(!nuevo){
         printf("Error al asignar memoria para un nodo nuevo");
-        return ERROR;
+        return HAY_ERROR;
     }
 
     nuevo->info = malloc(MAX_NOMBRE-1);
@@ -206,6 +215,7 @@ int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
     *listaJugadores = nuevo;
     return EXITO;
 }
+
 ///////////////////////////////////////////////////////////*///////////////////////////////////
 //--LOGICA ARCHIVO CONFIGURACION
 /////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -255,6 +265,7 @@ bool jugadorEstaListo(){
         printf("Respuesta no valida, ingresa Y o N\n");
     }
 }
+
 void normalizacionTexto(char* texto){
 
     if (ES_MINUS(*texto)){
@@ -286,6 +297,7 @@ void imprimirLista(tLista *lista){
         idx++;
     }
 }
+
 void menu( char decision[MAX_NOMBRE]){
     printf("[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
     scanf("%s", decision);
@@ -294,12 +306,14 @@ void menu( char decision[MAX_NOMBRE]){
         scanf("%s", decision);
     }
 }
+
 bool validacionDecision(char decision[]){
     if(strcmp(decision,"A")==0 || strcmp(decision,"B")==0 || strcmp(decision,"C")==0){
         return true;
     }else
         return false;
 }
+
 ///////////////////////////////////COLA FUNCIONES
 void crearCola(tCola *cola){
     cola->inicio = 0;
@@ -334,6 +348,7 @@ void inicializarTablero(){
         }
     }
 }
+
 void mostrarTablero(){
 
     printf("\n\n\n");
@@ -440,3 +455,47 @@ void movIA(char tablero[TAM_TABLERO][TAM_TABLERO], char letraIA, int dificultad)
     return;
 }
 */
+
+
+int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configuracion){
+
+    char cadena[TAM_CADENA_ARCH];
+
+    FILE* arch = fopen(ruta_arch, "rt");
+    if(!arch) return HAY_ERROR;
+
+    fgets(cadena,TAM_CADENA_ARCH,arch);
+    sscanf(cadena,"%[^|]|%[^\n]",configuracion->urlApi,configuracion->codIdenGrupo);
+
+    fgets(cadena,TAM_TABLERO,arch);
+    sscanf(cadena,"%d",&configuracion->CantPartidas);
+
+    fclose(arch);
+
+    return EXITO;
+}
+
+
+// Crea una lista (limitada) para el ranking
+int obtenerRanking(tLista* lista, tConfiguracion* configuracion){
+
+    CURLcode res;
+    tJugadorAPI jugador;
+    tRespuesta resAPI = {NULL, 0};
+    char pathGet[TAM_CADENA_ARCH];
+
+    snprintf(pathGet, sizeof(pathGet), "%s/%s", configuracion->urlApi, configuracion->codIdenGrupo);
+
+    res = peticionGET(&resAPI, pathGet);
+    if (res != CURLE_OK){
+        printf("Error en la solicitud a la API.\n");
+        return HAY_ERROR;
+    }
+    else{
+        while(parsearJugadores(&resAPI, &jugador))
+            insertarOrdenadoLimitado(lista, LIMITE_RANKING, &jugador, sizeof(tJugadorAPI), compararJugAPI);
+    }
+    free(resAPI.info);
+    return TODO_OK;
+}
+

@@ -8,7 +8,7 @@
 #include "apiHeader.h"
 
 #define MAX_NOMBRE 50
-#define ERROR 1
+#define HAY_ERROR 1
 #define EXITO 0
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
@@ -23,6 +23,7 @@
 #define TAM_MAX_JSON 200
 #define ES_MINUS(x) (x>=97 && x<=122)? 1 : 0
 #define ES_MAYUS(x) (x>=65 && x<=90)? 1 : 0
+
 
 typedef void (*TurnoFuncion)();
 typedef struct{
@@ -78,12 +79,15 @@ void mostrarTablero();
 int puedeGanar(char tablero[][TAM_TABLERO], char, int*, int*);
 void movIA(char tablero[][TAM_TABLERO], char, int);
 
-
 //////////////////FUNCIONES COLA (PODRIA PASARSE A OTRO ARCHIVO COMO SE HACE CON LISTA)
 void crearCola(tCola *cola);
 int encolar(tCola *cola, TurnoFuncion funcion);
 TurnoFuncion desencolar(tCola *cola);
+int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configuracion);
+
 //////////////////////////////////////////////////////////////
+
+int obtenerRanking(tLista*, tConfiguracion*);
 
 
 #endif // JUEGOPRINCIPAL_H_INCLUDED

@@ -12,8 +12,9 @@ int main()
     if(strcmp(decisionJugador, "A")== 0){
         if(jugar(&listaJugadores,nombreArch) == ERROR){
             printf("Ocurrio un error al ingresar los jugadores \n");
-            return ERROR;
+            return HAY_ERROR;
         }
     }
+
     return 0;
 }
