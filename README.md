@@ -49,6 +49,14 @@ Finalmente, una vez que todos los jugadores hayan jugado, el archivo se envía a
 --------------------------------------
 [B] - Ver ranking equipo:
 
+Esta opción muestra el ranking del equipo, donde se ordena a los jugadores por puntaje total de mayor a menor.
+
+Se listan:
+-  ⁠Nombre del jugador
+-  ⁠Puntaje acumulado
+-  ⁠Posición en el ranking
+
+Esto permite identificar quién fue el mejor del equipo y comparar rendimientos individuales.
 
 --------------------------------------
 [C] - Salir:
