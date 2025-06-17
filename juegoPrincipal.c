@@ -109,11 +109,11 @@ void juegaUsuario(){
     }
 }
 void juegaMaquina(){
+
     tPila pilaDeMovimientos;
     creoYllenoPilaMaquina(&pilaDeMovimientos);
     while(!estaVacia(&pilaDeMovimientos)){
         PtrMovInt movimiento = popPila(&pilaDeMovimientos);
-
         if(movimiento() == MOV_REALIZADO){
             return;
         }
@@ -121,15 +121,15 @@ void juegaMaquina(){
 }
 void creoYllenoPilaMaquina(tPila *pila){
     crearPila(pila);
-    pushPila(pila, intentarGanarMaquina);
-    pushPila(pila, intentarBloquearMaquina);
     pushPila(pila, ponerRandomMaquina);
+    pushPila(pila, intentarBloquearMaquina);
+    pushPila(pila, intentarGanarMaquina);
 }
 
 int intentarGanarMaquina(){
     int fila, columna;
      if(puedeGanar(&fila, &columna, simboloMaquina)){
-        tablero[fila][columna] = simboloMaquina;
+       colocarFicha(fila, columna, simboloMaquina);
         return MOV_REALIZADO;
      }
      return MOV_NO_REALIZADO;
@@ -137,7 +137,7 @@ int intentarGanarMaquina(){
 int intentarBloquearMaquina() {
     int fila, columna;
      if(puedeGanar(&fila, &columna, simboloJugador)){
-        tablero[fila][columna] = simboloMaquina;
+        colocarFicha(fila, columna, simboloMaquina);
         return MOV_REALIZADO;
      }
      return MOV_NO_REALIZADO;
@@ -151,7 +151,7 @@ int ponerRandomMaquina() {
     }
     while (tablero[fila][columna] != ' ');
 
-    tablero[fila][columna] = simboloMaquina;
+    colocarFicha(fila, columna, simboloMaquina);
 
     return MOV_REALIZADO;
 }
@@ -177,24 +177,9 @@ bool puedeGanar(int* fila, int* columna, char ficha){
             }
         }
     }
-
     return false;
 }
 
-/*
-int obtenerPosicionesLibres(int casillasLibres[][2]) {
-    int cantCasillasLibres = 0;
-    for (int i = 0; i < TAM_TABLERO; i++) {
-        for (int j = 0; j < TAM_TABLERO; j++) {
-            if (tablero[i][j] == ' ') {
-                casillasLibres[cantCasillasLibres][0] = i;
-                casillasLibres[cantCasillasLibres][1] = j;
-                cantCasillasLibres++;
-            }
-        }
-    }
-    return cantCasillasLibres;
-}*/
 bool esIngresoValido(int fila, int columna){
     if(fila < 0 || fila >= N || columna < 0 || tablero[fila][columna] != ' '){
         return false;
@@ -216,13 +201,11 @@ int barajarTurnos(tLista* lista){
     if(!vectorDeJugadores){
         return ERROR;
     }
-    //paso a vector
     tNodo *actual = *lista;
     for(int i = 0; i < cantJugadores; i++){
         vectorDeJugadores[i] = actual;
         actual = actual->sig;
     }
-    //random
     srand((unsigned)time (NULL));
     for(int i = cantJugadores - 1; i > 0; i--){
         int j = rand() % ( i + 1 );
