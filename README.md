@@ -1,7 +1,26 @@
 # Contracampo-TaCTi
 Instructivo de Juego TA - C - TI
 
-¿COMO JUGAR?
+Aclaración importante:
+Con la intención de que ests funcione, debe agregarse las librerias de C:
+  <stdlib.h>
+	<stdio.h>
+	<string.h>
+	<time.h>
+  <curl/curl.h>
+  <stdbool.h>
+
+--------------------------------------------------------------------------------------------------
+*Cambiar Configuración*
+
+con la intención de cambiar la configuración, se debe ingresar:
+
+
+
+--------------------------------------------------------------------------------------------------
+
+
+*¿Como jugar?*
 
 Al momento de inciar el juego, se despliega un menu donde indica al usuario donde se le da al usuario 2 opciones:
 
@@ -11,7 +30,7 @@ Al momento de inciar el juego, se despliega un menu donde indica al usuario dond
 
 [C] - Salir: Permite salir del juego.
 
---------------------------------------------------------------------------------------------------
+--------------------------------------
 [A] - Jugar:
 
 El primer paso para jugar TA - C - TI, es definir los jugadores que seran parte del equipo. Para ello se despliega un menu solicitando los nombres del os jugadores, el juego te permite agregar todos los jugadores que desees. Una vez agregados todos los jugadores ,debes enviar la letra "c" para terminar con la carga.
@@ -24,10 +43,12 @@ Los turnos iran pasando hasta que eventualmente el tablero se llene o alguien ga
 
 Una vez jugados todos los jugadores, se envia el archivo a la base de datos para poder almacenar el puntaje del equipo.
 
---------------------------------------------------------------------------------------------------
+
+--------------------------------------
 [B] - Ver ranking equipo:
 
---------------------------------------------------------------------------------------------------
+
+--------------------------------------
 [C] - Salir:
 
 Permite al usuario dejar de jugar.
