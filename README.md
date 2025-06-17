@@ -33,15 +33,17 @@ Al momento de inciar el juego, se despliega un menu donde indica al usuario dond
 --------------------------------------
 [A] - Jugar:
 
-El primer paso para jugar TA - C - TI, es definir los jugadores que seran parte del equipo. Para ello se despliega un menu solicitando los nombres del os jugadores, el juego te permite agregar todos los jugadores que desees. Una vez agregados todos los jugadores ,debes enviar la letra "c" para terminar con la carga.
 
-Una vez cargados los jugadores, comienza el juegon el orden en el que fueron cargados los jugadores.El juego consulta al jugador si esta listado para jugar.  En caso de aceptar, El juego le indica al jugador cuantos juegos le quedan para jugar al jugador y muestra el tablero vacio y se determina de manera random quien empieza jugando, si el jugador o la inteligencia artificial,. En caso de que el jugador empiece, se le asigna la ficha "X", caso contrario, se le asigna la ficha "O".
+El primer paso para jugar TA-C-TI consiste en definir los jugadores que formarán parte del equipo. Para ello, se despliega un menú en el que se solicitan los nombres de los jugadores. El juego permite agregar tantos jugadores como se desee. Una vez ingresados todos los nombres, se debe escribir la letra "c" para finalizar la carga.
 
-Posterior a esto el sistema, dependiendo de quien empieza, selecciona determina el orden de los turnos del jugador y de la inteligencia artificial, solicitandole al jugsador seleccionar la fila y columna que desea para poner su ficha en la celda correspondiente,e ncaso de seleccionar una celda no disponible o invalida, el juego solicitara que selecciones una celda valida. Posterior al turno del jugador, la inteligencia artificial realizara su movimiento, buscando superar al jugador.
+Con los jugadores ya registrados, el juego inicia siguiendo el orden en que fueron cargados. A cada jugador se le consulta si está disponible para jugar. En caso de que lo este, el juego le informa cuántas partidas le quedan por jugar, posterior a esto, lemuestra el tablero vacío y de forma random decide quién comenzará: el jugador o la inteligencia artificial. Si el jugador es quien inicia, se le asigna la ficha "X"; de lo contrario, se le asigna la ficha "O".
 
-Los turnos iran pasando hasta que eventualmente el tablero se llene o alguien gane, el sistema dara un puntaje dependiendo de quie ngane y en el caso de que gane el jugador, lo acumulara hasta que finalmente este sea guardado dentro del archivo que sera enviado a la base de datos.
+Según quién comience, se establece el orden de los turnos entre el jugador y la inteligencia artificial. El sistema le solicitará al jugador que indique una la fila y unala columna, para asi indicar la celda donde desea colocar su ficha. Si elige una celda inválida o ya ocupada, se le pedirá que seleccione una celda válida. Luego del turno del jugador, la inteligencia artificial realizará su movimiento, buscando ganar la partida.
 
-Una vez jugados todos los jugadores, se envia el archivo a la base de datos para poder almacenar el puntaje del equipo.
+Los turnos continuarán alternándose hasta que alguien gane o se complete el tablero. El sistema asignará un puntaje según el resultado: si el jugador gana, su puntaje se acumulará. Al finalizar todas las partidas, este puntaje se guardará en un archivo que será enviado a la base de datos.
+
+Finalmente, una vez que todos los jugadores hayan jugado, el archivo se envía a la base de datos para registrar el puntaje total del equipo.
+
 
 
 --------------------------------------
