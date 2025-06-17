@@ -1,0 +1,18 @@
+# IntelliJ / CLion project files
+.idea/
+*.iml
+
+# Build output directories
+bin/
+obj/
+
+# Compiled object files and executables
+*.o
+*.exe
+*.out
+
+# Makefile-generated files
+*.d
+
+# Editor backups
+*~
