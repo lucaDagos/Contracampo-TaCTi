@@ -11,7 +11,7 @@
 #define MAX_NOMBRE 50
 #define HAY_ERROR 1
 #define EXITO 0
-#define ERROR 1
+#define HAY_ERROR 1
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
 #define MAX_TURNOS 9
@@ -65,7 +65,7 @@ typedef tNodo* tLista;
 int jugar(tLista* listaJugadores, tLista* listaPartidas, int );
 int ingresarJugadores(tLista *listaJugadores);
 void crearListaJugadores(tLista *lista);
-int insertarJugadorEnLista(tLista *listaJugadores, char* jugador);
+int insertarJugadorEnLista(tLista*, char*);
 bool validacionDecision(char decision[]);
 void menu( char decision[MAX_NOMBRE]);
 void convertirAMayusculas(char []);
