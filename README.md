@@ -10,6 +10,25 @@ Con la intención de que ests funcione, debe agregarse las librerias de C:
   <curl/curl.h>
   <stdbool.h>
 
+Incluimos para un mayor disfrute del juego, un programa PYTHON hecho con la ayuda de la IA.
+Este nos permite ver la ejecucion del codigo C en tiempo real (la ventana a la derecha) y tener una mejor experiencia de juego.
+Notar que para esto tenemos que correr en la terminal:
+- pip install PyQt5
+- pip3 install PyQt5 (depende que version de python tengas instalada)
+
+y ya con eso, podriamos usar el archivo bash que proporcionamos (jugar.sh) y correr en la terminal:
+- sh jugar.sh
+
+y ya podriamos disfrutar del juego!
+
+Tambien proporcionamos un makefile, que nos permite compilar el codigo C de manera mas facil (si estas en clion o vscode, por ejemplo)
+
+cuenta con los comandos:
+
+- make: compila el codigo C y genera el ejecutable "tateti"
+- make clean: elimina el ejecutable "tateti" y los archivos temporales generados durante la compilación
+- make run: compila el código C y ejecuta el programa, directamente desde la terminal
+
 --------------------------------------------------------------------------------------------------
 *Cambiar Configuración*
 

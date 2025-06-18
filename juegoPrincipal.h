@@ -119,13 +119,5 @@ void enviarDatosListaAPI(tLista* listaJugadores, tConfiguracion* configuracion, 
 void leerCadena(char *cadena, char *destino, size_t tam);
 void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido);
 void menuSecreto();
+void muestraTableroGUI();
 #endif // JUEGOPRINCIPAL_H_INCLUDED
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __cplusplus
-}
-#endif

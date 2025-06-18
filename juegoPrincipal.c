@@ -52,6 +52,7 @@ int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas){
                primero == COMIENZA_JUGADOR ? simboloJugador : simboloMaquina);
         inicializarTablero();
         mostrarTablero();
+        muestraTableroGUI();
         for(int i =0; i < MAX_TURNOS && encontrarPosibleGanador() == ' '; i++){
             PtrFuncion turno = desencolar(&colaDeTurnos);
             if(turno == NULL){
@@ -59,6 +60,7 @@ int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas){
             }
             turno();
             mostrarTablero();
+            muestraTableroGUI();
         }
         puntajeParcial = calcularPuntaje(encontrarPosibleGanador());
         jugador->puntaje += puntajeParcial;
@@ -87,11 +89,14 @@ void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido)
 
 int calcularPuntaje(char posibleGanador){
     if(posibleGanador == simboloJugador){
+        printf("El jugador ha ganado!\n");
         return PUNTAJE_GANO_JUGADOR;
     }
     if(posibleGanador == simboloMaquina){
+        printf("La maquina ha ganado!\n");
         return PUNTAJE_GANO_MAQUINA;
     }
+    printf("Empate!\n");
     return PUNTAJE_EMPATE;
 
 }
@@ -333,7 +338,7 @@ int modificarArchivoConfig(char nombreArch[20]){
                 leerCadena("Ingrese nueva URL: ", config.urlApi, sizeof(config.urlApi));
                 break;
             case 2:
-                leerCadena("Ingrese nuevo cÛdigo de identificaciÛn: ", config.codIdenGrupo, sizeof(config.codIdenGrupo));
+                leerCadena("Ingrese nuevo cÔøΩdigo de identificaciÔøΩn: ", config.codIdenGrupo, sizeof(config.codIdenGrupo));
                 break;
             case 3:
                 printf("Ingrese nueva cantidad de partidas: ");
@@ -343,7 +348,7 @@ int modificarArchivoConfig(char nombreArch[20]){
                 printf("Guardando cambios...\n");
                 break;
             default:
-                printf("OpciÛn invalida\n");
+                printf("OpciÔøΩn invalida\n");
         }
 
     } while(opcion != 0);
@@ -616,4 +621,13 @@ void enviarDatosListaAPI(tLista* listaJugadores, tConfiguracion* configuracion, 
         accion((*listaJugadores)->info, configuracion);
         listaJugadores=&(*listaJugadores)->sig;
     }
+}
+
+
+void muestraTableroGUI() {
+    // Esta funci√≥n imprime el tablero en un formato amigable para la consola
+    printf("['%c','%c','%c','%c','%c','%c','%c','%c','%c']\n",
+    tablero[0][0], tablero[0][1], tablero[0][2],
+           tablero[1][0], tablero[1][1], tablero[1][2],
+           tablero[2][0], tablero[2][1], tablero[2][2]);
 }

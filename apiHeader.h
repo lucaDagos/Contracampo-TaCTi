@@ -1,4 +1,4 @@
-/*#ifndef APIHEADER_H_INCLUDED
+#ifndef APIHEADER_H_INCLUDED
 #define APIHEADER_H_INCLUDED
 
 #include "listaSimple.h"
@@ -47,4 +47,3 @@ int compararFechaHora(const char*, const char*);
 int compararJugAPI(const void*, const void*);
 
 #endif // APIHEADER_H_INCLUDED
-*/

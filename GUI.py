@@ -1,5 +1,6 @@
 import sys
 import ast
+import re
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QStackedLayout, QVBoxLayout, QHBoxLayout,
     QPushButton, QMessageBox, QGridLayout, QLineEdit, QListWidget, QLabel,
@@ -44,6 +45,70 @@ class GameResultDialog(QDialog):
         self.timer.setSingleShot(True)
         self.timer.start(2000)  # Close after 2 seconds
 
+class RankingDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Ranking de Jugadores")
+        self.setFixedSize(600, 400)
+        self.setModal(True)
+
+        # Set styling
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #f5f5f5;
+                border: 2px solid #333;
+                border-radius: 8px;
+            }
+            QLabel {
+                color: #333;
+                font-weight: bold;
+            }
+            QTextEdit {
+                background-color: white;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-family: 'Courier New', monospace;
+                font-size: 12px;
+                padding: 10px;
+                color: #333;
+            }
+            QPushButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(15, 15, 15, 15)
+        layout.setSpacing(10)
+
+        # Title
+        title_label = QLabel("🏆 Ranking de Jugadores")
+        title_label.setStyleSheet("font-size: 18px; color: #2E7D32; margin-bottom: 10px;")
+        layout.addWidget(title_label)
+
+        # Text area for ranking display
+        self.ranking_text = QTextEdit()
+        self.ranking_text.setReadOnly(True)
+        self.ranking_text.setText("Cargando ranking...")
+        layout.addWidget(self.ranking_text)
+
+        # Close button
+        self.close_btn = QPushButton("Cerrar")
+        self.close_btn.clicked.connect(self.accept)
+        layout.addWidget(self.close_btn)
+
+    def update_ranking(self, ranking_data):
+        """Update the ranking display with formatted data"""
+        self.ranking_text.setText(ranking_data)
+
 class MenuWidget(QWidget):
     def __init__(self, switch_to_game, switch_to_ranking, quit_app):
         super().__init__()
@@ -53,6 +118,12 @@ class MenuWidget(QWidget):
         self.play_btn = QPushButton("Jugar (A)")
         self.rank_btn = QPushButton("Ver Ranking (B)")
         self.exit_btn = QPushButton("Salir (C)")
+
+        # Set keyboard shortcuts
+        self.play_btn.setShortcut('A')
+        self.rank_btn.setShortcut('B')
+        self.exit_btn.setShortcut('C')
+
         for btn, callback in [
             (self.play_btn, switch_to_game),
             (self.rank_btn, switch_to_ranking),
@@ -83,9 +154,24 @@ class PlayersWidget(QWidget):
 
         self.add_btn.clicked.connect(self.add_player)
         self.start_btn.clicked.connect(self.finish_players)
+        self.input.returnPressed.connect(self.add_player)
+
+    def reset(self):
+        """Reset the widget to initial state"""
+        self.list_widget.clear()
+        self.input.clear()
+
+    def showEvent(self, event):
+        """Called when widget is shown - automatically reset"""
+        super().showEvent(event)
+        self.reset()
+        self.input.setFocus()
 
     def add_player(self):
         name = self.input.text().strip()
+        if not name and self.list_widget.count() != 0:
+            self.finish_players()
+
         if not name:
             return
         self.proc.write((name + "\n").encode())
@@ -95,12 +181,13 @@ class PlayersWidget(QWidget):
     def finish_players(self):
         self.proc.write(b"c\n")
         self.proc.write(b"Y\n")  # Confirmar inicio del juego
+        self.reset()
         self.switch_to_board()
-
 class BoardWidget(QWidget):
-    def __init__(self, proc):
+    def __init__(self, proc, switch_to_menu):
         super().__init__()
         self.proc = proc
+        self.switch_to_menu = switch_to_menu
         self.cells = []
 
         # Main layout for the entire widget
@@ -149,6 +236,13 @@ class BoardWidget(QWidget):
         """Process output data to update the board and detect game results"""
         print(f"BoardWidget processing data: {repr(data)}")  # Debug output
 
+        # Check for API message to return to menu
+        if "Enviando datos a la API..." in data:
+            print("API message detected, switching to menu")
+            # Add a small delay to ensure message is processed
+            QTimer.singleShot(100, self.switch_to_menu)
+            return
+
         # First, always process board updates
         lines = data.splitlines()
         board_updated = False
@@ -189,7 +283,6 @@ class BoardWidget(QWidget):
                                 continue
 
                     # Method 2: Use regex as fallback
-                    import re
                     pattern = r"Partidas restantes de ['\"]?([^'\":\n]+)['\"]?\s*:\s*(\d+)"
                     match = re.search(pattern, line)
                     if match:
@@ -322,7 +415,8 @@ class MainWindow(QWidget):
             quit_app=QApplication.instance().quit
         )
         self.players = PlayersWidget(self.proc, switch_to_board=self.show_board)
-        self.board = BoardWidget(self.proc)
+        # Pass the switch_to_menu callback to BoardWidget
+        self.board = BoardWidget(self.proc, switch_to_menu=self.switch_to_menu)
 
         self.stack.addWidget(self.menu)
         self.stack.addWidget(self.players)
@@ -339,13 +433,123 @@ class MainWindow(QWidget):
 
         self.setLayout(main_layout)
 
+        # Initialize ranking capture variables
+        self.capturing_ranking = False
+        self.ranking_data = []
+
+    def switch_to_menu(self):
+        """Switch back to the main menu"""
+        print("Switching to main menu")
+        self.stack.setCurrentWidget(self.menu)
+
     def append_log(self):
+        """Modified append_log method to handle ranking data capture"""
         data = self.proc.readAllStandardOutput().data().decode()
         self.log_view.append(data)
+
+        # Handle ranking data capture
+        if hasattr(self, 'capturing_ranking') and self.capturing_ranking:
+            self.process_ranking_data(data)
 
         # Also handle board updates here
         if hasattr(self, 'board') and self.stack.currentWidget() == self.board:
             self.board.process_output(data)
+
+    def process_ranking_data(self, data):
+        """Process ranking data from C program output"""
+        lines = data.splitlines()
+
+        # Look for ranking table data
+        for line in lines:
+            line = line.strip()
+
+            # Skip empty lines
+            if not line:
+                continue
+
+            # Look for table separator lines or header
+            if '|' in line and ('Pos' in line or 'Nombre' in line or line.count('|') >= 4):
+                self.ranking_data.append(line)
+                continue
+
+            # Look for data rows (should have | separators)
+            if '|' in line and line.count('|') >= 4:
+                # This looks like a data row
+                self.ranking_data.append(line)
+                continue
+
+            # Look for lines that might be ranking entries without | separators
+            # Try to match pattern like "1   jugUno          2             17/06/2025 23:05:31"
+            pattern = r'^\s*(\d+)\s+(\w+)\s+(-?\d+)\s+([\d/:\s]+)\s*$'
+            match = re.match(pattern, line)
+            if match:
+                pos, name, score, date = match.groups()
+                formatted_line = f"| {pos:<3} | {name:<15} | {score:<13} | {date:<20} |"
+                self.ranking_data.append(formatted_line)
+
+        # Update dialog if we have collected some data
+        if len(self.ranking_data) > 0:
+            self.update_ranking_display()
+
+    def update_ranking_display(self):
+        """Format and display the collected ranking data"""
+        if not hasattr(self, 'ranking_dialog') or not self.ranking_data:
+            return
+
+        # Create a nicely formatted ranking display
+        formatted_ranking = []
+
+        # Add header if not present
+        has_header = any('Pos' in line and 'Nombre' in line for line in self.ranking_data)
+        if not has_header:
+            formatted_ranking.extend([
+                "+" + "-" * 58 + "+",
+                "| Pos | Nombre          | Puntaje Total | Ultima Partida       |",
+                "+" + "-" * 58 + "+"
+            ])
+
+        # Add the data
+        for line in self.ranking_data:
+            if line.strip():
+                formatted_ranking.append(line)
+
+        # Add bottom border if needed
+        if formatted_ranking and not formatted_ranking[-1].startswith('+'):
+            formatted_ranking.append("+" + "-" * 58 + "+")
+
+        # Join and display
+        ranking_text = "\n".join(formatted_ranking)
+
+        # Add some summary info
+        data_rows = [line for line in self.ranking_data if '|' in line and not ('Pos' in line or line.startswith('+'))]
+        if data_rows:
+            summary = f"\n\nTotal de jugadores: {len(data_rows)}"
+            ranking_text += summary
+
+        self.ranking_dialog.update_ranking(ranking_text)
+
+    def show_ranking(self):
+        """Show ranking dialog and request ranking data from C program"""
+        if self.proc.state() != QProcess.Running:
+            QMessageBox.warning(self, "Error", "El programa C no está ejecutándose")
+            return
+
+        # Create and show dialog
+        self.ranking_dialog = RankingDialog(self)
+
+        # Set up temporary data capture for ranking
+        self.capturing_ranking = True
+        self.ranking_data = []
+
+        # Send 'B' command to C program
+        self.proc.write(b"B\n")
+
+        # Show dialog
+        self.ranking_dialog.exec_()
+
+        # Clean up
+        self.capturing_ranking = False
+        self.ranking_data = []
 
     def goto_players(self):
         if self.proc.state() == QProcess.Running:
@@ -354,9 +558,6 @@ class MainWindow(QWidget):
 
     def show_board(self):
         self.stack.setCurrentWidget(self.board)
-
-    def show_ranking(self):
-        QMessageBox.information(self, "Ranking", "Funcionalidad de ranking aún no implementada.")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

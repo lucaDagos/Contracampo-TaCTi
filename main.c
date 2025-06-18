@@ -3,6 +3,7 @@
 #include "informePartidas.h"
 int main()
 {
+    setbuf(stdout, NULL); // Desactivar el buffer de salida, para la GUI
     char decisionJugador[MAX_NOMBRE];
     tLista listaJugadores;
     tLista listaPartidas;
@@ -22,7 +23,7 @@ int main()
             }
             ordenarLista(&listaJugadores, compararPuntajeTotal);
             crearInformePartidas(&listaJugadores, &listaPartidas, config.CantPartidas, compararIgualdadPuntajeTotal);
-            printf("\nEnviando datos a la API...");
+            printf("\nEnviando datos a la API...\n");
             enviarDatosListaAPI(&listaJugadores, &config, enviarDatosJSON);
             listaVaciar(&listaJugadores);
             listaVaciar(&listaPartidas);
@@ -40,7 +41,7 @@ int main()
          }else if(strcmp(decisionJugador, "MODIFICARARCHIVO") == 0){
             modificarArchivoConfig(nombreArch);
          }else if(strcmp(decisionJugador, "C") != 0){
-            printf("Opción no válida. Intente nuevamente.\n");
+            printf("Opciï¿½n no vï¿½lida. Intente nuevamente.\n");
 
         }
      } while(strcmp(decisionJugador, "C") != 0);
