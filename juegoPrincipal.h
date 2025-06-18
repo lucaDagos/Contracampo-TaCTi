@@ -11,7 +11,6 @@
 #define MAX_NOMBRE 50
 #define HAY_ERROR 1
 #define EXITO 0
-#define HAY_ERROR 1
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
 #define MAX_TURNOS 9
