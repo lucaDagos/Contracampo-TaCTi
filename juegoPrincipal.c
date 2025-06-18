@@ -4,7 +4,7 @@
 //esto es el contexto en una partida para evitar la repeticion en los parametros
 char simboloJugador;
 char simboloMaquina;
-char tablero[N][N];
+char tablero[TAM_TABLERO][TAM_TABLERO];
 
 //REINICIAR TABLERO DESPUES DE CADA PARTIDA
 ///////////////////////////////////////////////////////////*///////////////////////////////////
@@ -58,7 +58,7 @@ int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas){
                 return ERROR;
             }
             turno();
-            mostrarTablero(tablero);
+            mostrarTablero();
         }
         puntajeParcial = calcularPuntaje(encontrarPosibleGanador());
         jugador->puntaje += puntajeParcial;
@@ -69,6 +69,22 @@ int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas){
 
     return jugador->puntaje;
 }
+void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido){
+
+    tPartida partida;
+    tJugador* auxJugador = (tJugador*) jugador;
+    int i,j;
+
+    for(i=0; i<TAM_TABLERO; i++){
+        for(j=0; j<TAM_TABLERO; j++){
+            partida.tablero[i][j] = tablero[i][j];
+        }
+    }
+    partida.puntajeObtenido = puntajeObtenido;
+    strcpy(partida.jugador, auxJugador->nombre);
+    listaInsertarAlFinal(listaPartidas, &partida, sizeof(tPartida));
+}
+
 int calcularPuntaje(char posibleGanador){
     if(posibleGanador == simboloJugador){
         return PUNTAJE_GANO_JUGADOR;
@@ -104,13 +120,13 @@ int determinarQuienEmpieza(){
 }
 void juegaUsuario(){
     int fila, columna;
-    printf("[usuario] ingresa fila y columna (1-%d): \n", N);
+    printf("[usuario] ingresa fila y columna (1-%d): \n", TAM_TABLERO);
     scanf("%d%d",&fila,&columna);
     if(esIngresoValido( fila - 1, columna-1)){
         colocarFicha( fila-1, columna-1,simboloJugador);
     }else{
         printf("Movimiento invalido, usted ingreso :%d%d. Intenta De nuevo...\n", fila, columna);
-        juegaUsuario(tablero);
+        juegaUsuario();
     }
 }
 void juegaMaquina(){
@@ -186,7 +202,7 @@ bool puedeGanar(int* fila, int* columna, char ficha){
 }
 
 bool esIngresoValido(int fila, int columna){
-    if(fila < 0 || fila >= N || columna < 0 || tablero[fila][columna] != FICHA_VACIA){
+    if(fila < 0 || fila >= TAM_TABLERO || columna < 0 || tablero[fila][columna] != FICHA_VACIA){
         return false;
     }
     return true;
@@ -309,7 +325,6 @@ int modificarArchivoConfig(char nombreArch[20]){
     fscanf(arch, "%d", &config.CantPartidas);
     fclose(arch);
     int opcion;
-    char aux[TAM_CADENA];
     do {
         menuSecreto();
         scanf("%d", &opcion);
@@ -341,6 +356,8 @@ int modificarArchivoConfig(char nombreArch[20]){
     fprintf(arch, "%s\n", config.codIdenGrupo);
     fprintf(arch, "%d", config.CantPartidas);
     fclose(arch);
+
+    }
     return EXITO;
 }
 void menuSecreto(){
@@ -536,7 +553,7 @@ void mostrarTablero(){
 char encontrarPosibleGanador(){
 
     // verificacion horizontal y vertical
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < TAM_TABLERO; i++)
     {
         if (tablero[i][0] != FICHA_VACIA && tablero[i][0] == tablero[i][1] && tablero[i][1] == tablero[i][2]){
             return tablero[i][0];
@@ -581,9 +598,7 @@ int obtenerRanking(tLista* lista, tConfiguracion* configuracion){
     tJugadorAPI jugador;
     tRespuesta resAPI = {NULL, 0};
     char pathGet[TAM_CADENA_ARCH];
-
     snprintf(pathGet, sizeof(pathGet), "%s/%s", configuracion->urlApi, configuracion->codIdenGrupo);
-
     res = peticionGET(&resAPI, pathGet);
     if (res != CURLE_OK){
         printf("Error en la solicitud a la API.\n");

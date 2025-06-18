@@ -14,7 +14,6 @@
 #define ERROR 1
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
-#define N 3
 #define MAX_TURNOS 9
 #define TAM_TABLERO 3
 #define PUNTAJE_GANO_JUGADOR 3
@@ -118,5 +117,6 @@ int compararPuntajeTotal(const void*, const void*);
 int compararIgualdadPuntajeTotal(const void* a, const void* b);
 void enviarDatosListaAPI(tLista* listaJugadores, tConfiguracion* configuracion, void(*accion)(const void*, const void*));
 void leerCadena(char *cadena, char *destino, size_t tam);
+void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido);
 void menuSecreto();
 #endif // JUEGOPRINCIPAL_H_INCLUDED
