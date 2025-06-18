@@ -1,10 +1,10 @@
-/*#include "apiHeader.h"
+#include "apiHeader.h"
 
 void enviarDatosJSON(const void* elem1, const void* elem2){
 
     tJugador* jugador = (tJugador*) elem1;
 
-    tConfiguracion* configuracion= (tConfiguracion*) elem2;
+    tConfiguracion* configuracion = (tConfiguracion*) elem2;
 
     char jsonData[TAM_MAX_JSON];
 
@@ -22,7 +22,7 @@ void enviarDatosJSON(const void* elem1, const void* elem2){
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp){
 
-    // Funciï¿½n que maneja la respuesta de la solicitud HTTP
+    // Función que maneja la respuesta de la solicitud HTTP
     size_t realsize = size* nmemb;
     tRespuesta* res = (tRespuesta*) userp;
     char* info = malloc(realsize + 1);
@@ -56,7 +56,7 @@ CURLcode peticionGET(tRespuesta* respuesta, const char* path){
     // Establecer la URL de la solicitud GET
     curl_easy_setopt(curl, CURLOPT_URL, path);
 
-    // Establecer la funciï¿½n de retorno de llamada para manejar la respuesta
+    // Establecer la función de retorno de llamada para manejar la respuesta
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, respuesta);
@@ -98,7 +98,7 @@ CURLcode peticionPOST(tRespuesta* respuesta, const char* pathUrl, const char* js
     if (!curl)
         return CURLE_FAILED_INIT;
 
-    // Agregar encabezados para indicar que se envï¿½a JSON
+    // Agregar encabezados para indicar que se envía JSON
     headers = curl_slist_append(headers, "Content-Type: application/json");
 
     // Configurar la URL
@@ -113,7 +113,7 @@ CURLcode peticionPOST(tRespuesta* respuesta, const char* pathUrl, const char* js
     // Configurar los encabezados
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-    // Establecer la funciï¿½n de retorno de llamada para manejar la respuesta
+    // Establecer la función de retorno de llamada para manejar la respuesta
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, respuesta);
@@ -198,7 +198,7 @@ int compararFechaHora(const char* fyh1, const char* fyh2){
     return 0;
 }
 
-// Comparar jugadores API segun Nombre, Puntaje (descendente) y Fecha/Hora (mï¿½s reciente)
+// Comparar jugadores API segun Nombre, Puntaje (descendente) y Fecha/Hora (más reciente)
 int compararJugAPI(const void* a, const void* b){
 
     tJugadorAPI* jugA = (tJugadorAPI*) a;
@@ -215,5 +215,3 @@ int compararJugAPI(const void* a, const void* b){
     return resultado;
 }
 
-
-*/

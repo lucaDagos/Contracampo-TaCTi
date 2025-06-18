@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "listaSimple.h"
 #include "apiHeader.h"
 
@@ -13,7 +14,6 @@
 #define ERROR 1
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
-#define N 3
 #define MAX_TURNOS 9
 #define TAM_TABLERO 3
 #define PUNTAJE_GANO_JUGADOR 3
@@ -25,9 +25,10 @@
 #define TAM_MAX_JSON 200
 #define MOV_REALIZADO 1
 #define MOV_NO_REALIZADO -1
-
+#define FICHA_VACIA ' '
 #define ES_MINUS(x) (x>=97 && x<=122)? 1 : 0
 #define ES_MAYUS(x) (x>=65 && x<=90)? 1 : 0
+
 
 typedef void (*PtrFuncion)();
 typedef int (*PtrMovInt)();
@@ -61,20 +62,22 @@ typedef struct{
 }tPila;
 typedef tNodo* tLista;
 
-int jugar(tLista *listaJugadores, char nombreArch[20]);
+int jugar(tLista* listaJugadores, tLista* listaPartidas, int );
 int ingresarJugadores(tLista *listaJugadores);
 void crearListaJugadores(tLista *lista);
 int insertarJugadorEnLista(tLista *listaJugadores, char* jugador);
 bool validacionDecision(char decision[]);
 void menu( char decision[MAX_NOMBRE]);
+void convertirAMayusculas(char []);
 void imprimirLista(tLista* lista);
 int barajarTurnos(tLista* lista);
 void intercambiar( void * a, void* b, size_t sizeElem);
 bool jugadorEstaListo();
 void normalizacionTexto(char* texto);
-int crearArchivoConfig(char[30], int);
+int crearArchivoConfig(char nombreArch[20]);
+int modificarArchivoConfig(char nombreArch[20]);
 int leerPartidasArch(char nombreArch[20]);
-int comienzaAJugar(char nombreJugador[MAX_NOMBRE] ,char nombreArch[20]);
+int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas);
 void asignarFicha(int quienEmpieza);
 int generoColaTurnos(tCola* colaDeTurnos, int quienEmpieza);
 int determinarQuienEmpieza();
@@ -110,8 +113,12 @@ void creoYllenoPilaMaquina(tPila *pila);
 
 int obtenerRanking(tLista*, tConfiguracion*);
 int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configuracion);
-
-
+int compararPuntajeTotal(const void*, const void*);
+int compararIgualdadPuntajeTotal(const void* a, const void* b);
+void enviarDatosListaAPI(tLista* listaJugadores, tConfiguracion* configuracion, void(*accion)(const void*, const void*));
+void leerCadena(char *cadena, char *destino, size_t tam);
+void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido);
+void menuSecreto();
 #endif // JUEGOPRINCIPAL_H_INCLUDED
 
 
