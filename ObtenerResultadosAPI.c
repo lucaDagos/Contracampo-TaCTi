@@ -1,4 +1,4 @@
-#include "API.h"
+#include "ObtenerResultadosApi.h"
 
 CURLcode peticionGET(tRespuesta* respuesta, const char* path){
 
