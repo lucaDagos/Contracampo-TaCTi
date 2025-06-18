@@ -10,7 +10,6 @@
 
 #define MAX_NOMBRE 50
 #define HAY_ERROR 1
-#define ERROR 1
 #define EXITO 0
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
@@ -97,11 +96,9 @@ int ponerRandomMaquina();
 
 void inicializarTablero();
 void mostrarTablero();
-//////////////////FUNCIONES COLA (PODRIA PASARSE A OTRO ARCHIVO COMO SE HACE CON LISTA)
 void crearCola(tCola *cola);
 int encolar(tCola *cola, PtrFuncion funcion);
 PtrFuncion desencolar(tCola *cola);
-//////////////////FUNCIONES PILA (PODRIA PASARSE A OTRO ARCHIVO COMO SE HACE CON LISTA)
 void crearPila(tPila *pila);
 int estaLlena(tPila* pila);
 int estaVacia(tPila*pila);
@@ -109,7 +106,6 @@ int pushPila(tPila *pila, PtrMovInt funcion);
 void creoYllenoPilaMaquina(tPila *pila);
 PtrMovInt popPila(tPila *pila);
 void creoYllenoPilaMaquina(tPila *pila);
-//////////////////////////////////////////////////////////////
 
 int obtenerRanking(tLista*, tConfiguracion*);
 int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configuracion);

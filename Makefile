@@ -16,8 +16,8 @@ $(EXEC): $(OBJ)
 
 clean:
 	rm -f $(OBJ) $(EXEC)
-	rm -rf ./informes
-	rm -f configuracion.txt
+	rm -f ./informes/*
+
 
 run: $(EXEC)
 	./$(EXEC)
