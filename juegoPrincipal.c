@@ -71,6 +71,7 @@ int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas){
 
     return jugador->puntaje;
 }
+
 void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido){
 
     tPartida partida;
@@ -100,6 +101,7 @@ int calcularPuntaje(char posibleGanador){
     return PUNTAJE_EMPATE;
 
 }
+
 void asignarFicha(int quienEmpieza){
     if(quienEmpieza == COMIENZA_JUGADOR){
         simboloJugador = 'X';
@@ -263,14 +265,21 @@ void intercambiar( void * a, void* b, size_t sizeElem)
 
 int ingresarJugadores(tLista *listaJugadores){
     char jugador[MAX_NOMBRE];
+    char esjugador_invalido=0;
     int errores = 0;
     do{
         printf("Ingrese los nombres de los jugadores(ingrese 'c' para terminar con la carga):\n");
         scanf("%s", jugador);
+        while(esjugador_invalido==0 && strcmp(jugador, "c") == 0)
+        {
+            printf("Debe ingresar al menos un jugador para comenzar el juego):\n");
+            scanf("%s", jugador);
+        }
         if(strcmp(jugador, "c") == 0){
             return EXITO;
         }
         errores = insertarJugadorEnLista(listaJugadores, jugador);
+        esjugador_invalido=1;
     }while(errores == 0);
 
     if(errores > 0){
@@ -279,21 +288,33 @@ int ingresarJugadores(tLista *listaJugadores){
     return EXITO;
 }
 
-int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
-    tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
+int insertarJugadorEnLista(tLista *listaJugadores, char* nom_jug){
+    tJugador jugador;
+    strcpy(jugador.nombre, nom_jug);
+    jugador.puntaje = 0;
+
+    tNodo* nuevo = (tNodo*) malloc(sizeof(tNodo));
     if(!nuevo){
         printf("Error al asignar memoria para un nodo nuevo");
         return HAY_ERROR;
     }
-    nuevo->info = malloc(MAX_NOMBRE-1);
-    memcpy(nuevo->info, jugador, MAX_NOMBRE - 1);
-    nuevo->tamInfo = MAX_NOMBRE - 1;
+
+    nuevo->info = malloc(sizeof(tJugador));
+    if(!nuevo->info){
+        printf("Error al asignar memoria para la informacion del jugador");
+        return HAY_ERROR;
+    }
+
+    memcpy(nuevo->info, &jugador, sizeof(tJugador));
+    nuevo->tamInfo = sizeof(tJugador);
     nuevo->sig = NULL;
 
     while(*listaJugadores) {
         listaJugadores = &(*listaJugadores)->sig;
     }
+
     *listaJugadores = nuevo;
+
     return EXITO;
 }
 
@@ -338,7 +359,7 @@ int modificarArchivoConfig(char nombreArch[20]){
                 leerCadena("Ingrese nueva URL: ", config.urlApi, sizeof(config.urlApi));
                 break;
             case 2:
-                leerCadena("Ingrese nuevo c�digo de identificaci�n: ", config.codIdenGrupo, sizeof(config.codIdenGrupo));
+                leerCadena("Ingrese nuevo código de identificación: ", config.codIdenGrupo, sizeof(config.codIdenGrupo));
                 break;
             case 3:
                 printf("Ingrese nueva cantidad de partidas: ");
@@ -348,7 +369,7 @@ int modificarArchivoConfig(char nombreArch[20]){
                 printf("Guardando cambios...\n");
                 break;
             default:
-                printf("Opci�n invalida\n");
+                printf("Opción invalida\n");
         }
 
     } while(opcion != 0);
@@ -439,7 +460,7 @@ void convertirAMayusculas(char cadena[]){
     }
 }
 void menu( char decision[MAX_NOMBRE]){
-    printf("[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
+    printf("\n[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
     scanf("%s", decision);
     convertirAMayusculas(decision);
     while(validacionDecision(decision) == false){
@@ -455,6 +476,7 @@ bool validacionDecision(char decision[]){
     }else
         return false;
 }
+
 int compararPuntajeTotal(const void* a, const void* b){
 
     const tJugador* jugadorA = (const tJugador*)a;

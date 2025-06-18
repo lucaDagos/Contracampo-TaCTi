@@ -198,20 +198,13 @@ int compararFechaHora(const char* fyh1, const char* fyh2){
     return 0;
 }
 
-// Comparar jugadores API segun Nombre, Puntaje (descendente) y Fecha/Hora (más reciente)
+// Comparar jugadores API segun Puntaje (descendente)
 int compararJugAPI(const void* a, const void* b){
+    const tJugadorAPI* jugA = (const tJugadorAPI*)a;
+    const tJugadorAPI* jugB = (const tJugadorAPI*)b;
 
-    tJugadorAPI* jugA = (tJugadorAPI*) a;
-    tJugadorAPI* jugB = (tJugadorAPI*) b;
-
-    int resultado = strcmp(jugA->nombre, jugB->nombre);  //Ascendente
-    if(resultado == 0){
-        resultado = jugB->puntaje - jugA->puntaje;  //Descendente
-        if(resultado == 0){
-            resultado = compararFechaHora(jugB->fyh, jugA->fyh);  //Descendente
-        }
-    }
-
-    return resultado;
+    if (jugA->puntaje < jugB->puntaje) return -1;
+    if (jugA->puntaje > jugB->puntaje) return 1;
+    return 0;
 }
 
