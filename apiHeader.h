@@ -12,6 +12,9 @@
 
 #define TAM_MAX_JSON 200
 #define LIMITE_RANKING 5
+#define URL_API  "https://algoritmos-api.azurewebsites.net/api/TaCTi"
+#define COD_GRUPO "estructura"
+#define CANT_PARTIDAS_CONFIG 2
 
 typedef struct {
     char nombre[TAM_CAD];

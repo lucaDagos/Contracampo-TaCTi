@@ -4,7 +4,7 @@ void enviarDatosJSON(const void* elem1, const void* elem2){
 
     tJugador* jugador = (tJugador*) elem1;
 
-    tConfiguracion* configuracion= (tConfiguracion*) elem2;
+    tConfiguracion* configuracion = (tConfiguracion*) elem2;
 
     char jsonData[TAM_MAX_JSON];
 
@@ -214,5 +214,4 @@ int compararJugAPI(const void* a, const void* b){
 
     return resultado;
 }
-
 

@@ -4,18 +4,15 @@
 //esto es el contexto en una partida para evitar la repeticion en los parametros
 char simboloJugador;
 char simboloMaquina;
-char tablero[N][N];
+char tablero[TAM_TABLERO][TAM_TABLERO];
 
 //REINICIAR TABLERO DESPUES DE CADA PARTIDA
 ///////////////////////////////////////////////////////////*///////////////////////////////////
 //--FUNCIONES PRINCIPALES
 /////////////////////////////////////////////////////////////////////////////////////////////*/
 
-int jugar(tLista *listaJugadores, char nombreArch[20]){
-    char jugador[MAX_NOMBRE];
+int jugar(tLista* listaJugadores, tLista* listaPartidas, int cantPart){
 
-    //creo la lista de jujadores y le pido que ingrese el nombre de los que van a jugar
-  
     listaCrear(listaJugadores);
     if(ingresarJugadores(listaJugadores) == HAY_ERROR){
         printf("hubo un error en la carga\n");
@@ -25,9 +22,10 @@ int jugar(tLista *listaJugadores, char nombreArch[20]){
     imprimirLista(listaJugadores);
     if(jugadorEstaListo()){
         printf("primer jugador listo\n");
-        while(!listaVacia(listaJugadores)){
-            sacarPrincipioLista(listaJugadores, jugador,sizeof(jugador));
-            comienzaAJugar(jugador,nombreArch);
+        while(*listaJugadores){
+            //sacarPrincipioLista(listaJugadores, jugador,sizeof(jugador));
+            comienzaAJugar((*listaJugadores)->info, cantPart, listaPartidas);
+            listaJugadores = &(*listaJugadores)->sig;
         }
     }
     else{
@@ -40,17 +38,16 @@ int jugar(tLista *listaJugadores, char nombreArch[20]){
 //--LOGICA DE JUEGO
 /////////////////////////////////////////////////////////////////////////////////////////////*/
 
-int comienzaAJugar(char nombreJugador[MAX_NOMBRE] ,char nombreArch[20]){
-    int cantPartidas;
-    int puntaje = 0;
+int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas){
+    tJugador* jugador = (tJugador*)infoJugador;
+    int puntajeParcial = 0;
     tCola colaDeTurnos;
-    cantPartidas = leerPartidasArch(nombreArch);
 
     while(cantPartidas > 0){
         int primero = determinarQuienEmpieza();
         generoColaTurnos(&colaDeTurnos, primero);
         asignarFicha(primero);
-        printf("Partidas restantes de %s:  %d\n", nombreJugador, cantPartidas);
+        printf("Partidas restantes de %s:  %d\n", jugador->nombre, cantPartidas);
         printf("%s comienza con '%c'\n", primero == COMIENZA_JUGADOR ? "Usuario" : "Maquina",
                primero == COMIENZA_JUGADOR ? simboloJugador : simboloMaquina);
         inicializarTablero();
@@ -61,14 +58,33 @@ int comienzaAJugar(char nombreJugador[MAX_NOMBRE] ,char nombreArch[20]){
                 return ERROR;
             }
             turno();
-            mostrarTablero(tablero);
+            mostrarTablero();
         }
-        puntaje += calcularPuntaje(encontrarPosibleGanador());
+        puntajeParcial = calcularPuntaje(encontrarPosibleGanador());
+        jugador->puntaje += puntajeParcial;
+        registrarPartida(listaPartidas, jugador, puntajeParcial);
         cantPartidas--;
     }
-    printf("Jugador: %s           Puntaje: %d\n", nombreJugador, puntaje);
-    return puntaje;
+    printf("Jugador: %s           Puntaje: %d\n", jugador->nombre, jugador->puntaje);
+
+    return jugador->puntaje;
 }
+void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido){
+
+    tPartida partida;
+    tJugador* auxJugador = (tJugador*) jugador;
+    int i,j;
+
+    for(i=0; i<TAM_TABLERO; i++){
+        for(j=0; j<TAM_TABLERO; j++){
+            partida.tablero[i][j] = tablero[i][j];
+        }
+    }
+    partida.puntajeObtenido = puntajeObtenido;
+    strcpy(partida.jugador, auxJugador->nombre);
+    listaInsertarAlFinal(listaPartidas, &partida, sizeof(tPartida));
+}
+
 int calcularPuntaje(char posibleGanador){
     if(posibleGanador == simboloJugador){
         return PUNTAJE_GANO_JUGADOR;
@@ -104,13 +120,13 @@ int determinarQuienEmpieza(){
 }
 void juegaUsuario(){
     int fila, columna;
-    printf("[usuario] ingresa fila y columna (1-%d): \n", N);
-    scanf("%d %d", &fila, &columna);
+    printf("[usuario] ingresa fila y columna (1-%d): \n", TAM_TABLERO);
+    scanf("%d%d",&fila,&columna);
     if(esIngresoValido( fila - 1, columna-1)){
         colocarFicha( fila-1, columna-1,simboloJugador);
     }else{
         printf("Movimiento invalido, usted ingreso :%d%d. Intenta De nuevo...\n", fila, columna);
-        juegaUsuario(tablero);
+        juegaUsuario();
     }
 }
 void juegaMaquina(){
@@ -168,17 +184,17 @@ bool puedeGanar(int* fila, int* columna, char ficha){
         {
             if (tablero[i][j] == ' ')
             {
-                tablero[i][j] = ficha;
+               colocarFicha(i,j,ficha);
 
                 if (encontrarPosibleGanador() == ficha)
                 {
                     *fila = i;
                     *columna = j;
-                    tablero[i][j] = ' ';
+                    colocarFicha(i,j,FICHA_VACIA);
                     return true;
                 }
 
-                tablero[i][j] = ' ';
+                tablero[i][j] = FICHA_VACIA;
             }
         }
     }
@@ -186,7 +202,7 @@ bool puedeGanar(int* fila, int* columna, char ficha){
 }
 
 bool esIngresoValido(int fila, int columna){
-    if(fila < 0 || fila >= N || columna < 0 || tablero[fila][columna] != ' '){
+    if(fila < 0 || fila >= TAM_TABLERO || columna < 0 || tablero[fila][columna] != FICHA_VACIA){
         return false;
     }
     return true;
@@ -252,21 +268,18 @@ int ingresarJugadores(tLista *listaJugadores){
         errores = insertarJugadorEnLista(listaJugadores, jugador);
     }while(errores == 0);
 
-
     if(errores > 0){
         return HAY_ERROR;
     }
     return EXITO;
 }
 
-//Recordar que este listaJugadores es un puntero al inicio, y que se manda por copia. Dejarlo localmente al final no te jode
 int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
     tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
     if(!nuevo){
         printf("Error al asignar memoria para un nodo nuevo");
         return HAY_ERROR;
     }
-
     nuevo->info = malloc(MAX_NOMBRE-1);
     memcpy(nuevo->info, jugador, MAX_NOMBRE - 1);
     nuevo->tamInfo = MAX_NOMBRE - 1;
@@ -282,34 +295,88 @@ int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
 ///////////////////////////////////////////////////////////*///////////////////////////////////
 //--LOGICA ARCHIVO CONFIGURACION
 /////////////////////////////////////////////////////////////////////////////////////////////*/
-int crearArchivoConfig(char nombreArch[20],int cantPartidas){
+int crearArchivoConfig(char nombreArch[20]){
     FILE *arch = fopen(nombreArch, "w");
     if(!arch){
-        printf("error al crear el archivo de configuracion\n");
+        printf("Error al crear el archivo de configuracion\n");
         return ERROR;
     }
-    fprintf(arch, "numero_de_partidas=%d\n", cantPartidas);
+    tConfiguracion config;
+
+    strcpy(config.urlApi, URL_API);
+    strcpy(config.codIdenGrupo, COD_GRUPO);
+    config.CantPartidas = CANT_PARTIDAS_CONFIG;
+
+    fprintf(arch, "%s|", config.urlApi);
+    fprintf(arch, "%s\n", config.codIdenGrupo);
+    fprintf(arch, "%d", config.CantPartidas);
     fclose(arch);
     return EXITO;
 }
-int leerPartidasArch(char nombreArch[20]){
+int modificarArchivoConfig(char nombreArch[20]){
     FILE *arch = fopen(nombreArch, "r");
-    char linea[100];
-    int partidas = -1;
     if(!arch){
         printf("error al crear el archivo de configuracion\n");
         return ERROR;
     }
-    fgets(linea, sizeof(linea), arch);
-    sscanf(linea, "numero_de_partidas=%d", &partidas);
+    tConfiguracion config;
+    fscanf(arch, "%[^|]|", config.urlApi);
+    fscanf(arch, "%[^\n]\n", config.codIdenGrupo);
+    fscanf(arch, "%d", &config.CantPartidas);
     fclose(arch);
-    if(partidas <= 0){
-        printf("valor invalido de numero de partidas: %d\n", partidas);
-        return ERROR;
-    }
-    return partidas;
-}
+    int opcion;
+    do {
+        menuSecreto();
+        scanf("%d", &opcion);
+        switch(opcion){
+            case 1:
+                leerCadena("Ingrese nueva URL: ", config.urlApi, sizeof(config.urlApi));
+                break;
+            case 2:
+                leerCadena("Ingrese nuevo código de identificación: ", config.codIdenGrupo, sizeof(config.codIdenGrupo));
+                break;
+            case 3:
+                printf("Ingrese nueva cantidad de partidas: ");
+                scanf("%d", &config.CantPartidas);
+                break;
+            case 0:
+                printf("Guardando cambios...\n");
+                break;
+            default:
+                printf("Opción invalida\n");
+        }
 
+    } while(opcion != 0);
+
+    arch = fopen(nombreArch, "w");
+    if(!arch){
+        printf("Error al reescribir el archivo de configuracion\n");
+        return HAY_ERROR;
+    fprintf(arch, "%s|", config.urlApi);
+    fprintf(arch, "%s\n", config.codIdenGrupo);
+    fprintf(arch, "%d", config.CantPartidas);
+    fclose(arch);
+
+    }
+    return EXITO;
+}
+void menuSecreto(){
+   printf("\n--- Modificar Configuracion ---\n");
+   printf("1. URL de la API\n");
+   printf("2. Codigo de identificacion\n");
+   printf("3. Cantidad de partidas\n");
+   printf("0. Guardar y salir\n");
+   printf("Opcion: ");
+}
+void leerCadena(char *cadena, char *destino, size_t tam) {
+    char aux[256];
+    printf("%s", cadena);
+    if (fgets(aux, sizeof(aux), stdin)) {
+        aux[strcspn(aux, "\n")] = '\0';
+        strncpy(destino, aux, tam - 1);
+        destino[tam - 1] = '\0';
+    }
+}
 ///////////////////////////////////////////////////////////*///////////////////////////////////
 //--FUNCIONES AUXILIARES
 /////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -360,23 +427,45 @@ void imprimirLista(tLista *lista){
         idx++;
     }
 }
-
+void convertirAMayusculas(char cadena[]){
+    int i;
+    for (i = 0; i < strlen(cadena); i++) {
+        cadena[i] = toupper(cadena[i]);
+    }
+}
 void menu( char decision[MAX_NOMBRE]){
     printf("[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
     scanf("%s", decision);
+    convertirAMayusculas(decision);
     while(validacionDecision(decision) == false){
         printf("ingrese una opcion correcta: \n");
         scanf("%s", decision);
+        convertirAMayusculas(decision);
     }
 }
 
 bool validacionDecision(char decision[]){
-    if(strcmp(decision,"A")==0 || strcmp(decision,"B")==0 || strcmp(decision,"C")==0){
+    if(strcmp(decision,"A")==0 || strcmp(decision,"B")==0 || strcmp(decision,"C")==0 || strcmp(decision,"MODIFICARARCHIVO")==0){
         return true;
     }else
         return false;
 }
+int compararPuntajeTotal(const void* a, const void* b){
 
+    const tJugador* jugadorA = (const tJugador*)a;
+    const tJugador* jugadorB = (const tJugador*)b;
+
+    if(jugadorA->puntaje < jugadorB->puntaje) return 1;
+    if(jugadorA->puntaje > jugadorB->puntaje) return -1;
+
+    return 0;
+}
+
+int compararIgualdadPuntajeTotal(const void* a, const void* b){
+    const tJugador* jugadorA = (const tJugador*)a;
+    const tJugador* jugadorB = (const tJugador*)b;
+    return jugadorA->puntaje == jugadorB->puntaje;
+}
 ///////////////////////////////////COLA FUNCIONES
 void crearCola(tCola *cola){
     cola->inicio = 0;
@@ -464,16 +553,24 @@ void mostrarTablero(){
 char encontrarPosibleGanador(){
 
     // verificacion horizontal y vertical
-    for(int i = 0; i < N; i++)
+    for(int i = 0; i < TAM_TABLERO; i++)
     {
-        if (tablero[i][0] != ' ' && tablero[i][0] == tablero[i][1] && tablero[i][1] == tablero[i][2]) return tablero[i][0];
-        if (tablero[0][i] != ' ' && tablero[0][i] == tablero[1][i] && tablero[1][i] == tablero[2][i]) return tablero[0][i];
+        if (tablero[i][0] != FICHA_VACIA && tablero[i][0] == tablero[i][1] && tablero[i][1] == tablero[i][2]){
+            return tablero[i][0];
+        }
+        if (tablero[0][i] != FICHA_VACIA && tablero[0][i] == tablero[1][i] && tablero[1][i] == tablero[2][i]){
+            return tablero[0][i];
+        }
     }
 
-    if (tablero[0][0] != ' ' && tablero[0][0] == tablero[1][1] && tablero[1][1] == tablero[2][2]) return tablero[0][0];
-    if (tablero[0][2] != ' ' && tablero[0][2] == tablero[1][1] && tablero[1][1] == tablero[2][0]) return tablero[0][2];
+    if (tablero[0][0] != FICHA_VACIA && tablero[0][0] == tablero[1][1] && tablero[1][1] == tablero[2][2]){
+        return tablero[0][0];
+    }
+    if (tablero[0][2] != FICHA_VACIA && tablero[0][2] == tablero[1][1] && tablero[1][1] == tablero[2][0]){
+        return tablero[0][2];
+    }
 
-    return ' ';
+    return FICHA_VACIA;
 }
 
 
@@ -485,7 +582,7 @@ int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configurac
     if(!arch) return HAY_ERROR;
 
     fgets(cadena,TAM_CADENA_ARCH,arch);
-    sscanf(cadena,"%[^|]|%[^\n]",configuracion->urlApi,configuracion->codIdenGrupo);
+    sscanf(cadena,"%[^|]|%[^\n]",configuracion->urlApi, configuracion->codIdenGrupo);
 
     fgets(cadena,TAM_TABLERO,arch);
     sscanf(cadena,"%d",&configuracion->CantPartidas);
@@ -495,17 +592,13 @@ int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configurac
     return EXITO;
 }
 
-
-// Crea una lista (limitada) para el ranking
 int obtenerRanking(tLista* lista, tConfiguracion* configuracion){
 
     CURLcode res;
     tJugadorAPI jugador;
     tRespuesta resAPI = {NULL, 0};
     char pathGet[TAM_CADENA_ARCH];
-
     snprintf(pathGet, sizeof(pathGet), "%s/%s", configuracion->urlApi, configuracion->codIdenGrupo);
-
     res = peticionGET(&resAPI, pathGet);
     if (res != CURLE_OK){
         printf("Error en la solicitud a la API.\n");
@@ -518,4 +611,9 @@ int obtenerRanking(tLista* lista, tConfiguracion* configuracion){
     free(resAPI.info);
     return TODO_OK;
 }
-
+void enviarDatosListaAPI(tLista* listaJugadores, tConfiguracion* configuracion, void(*accion)(const void*, const void*)){
+    while(*listaJugadores){
+        accion((*listaJugadores)->info, configuracion);
+        listaJugadores=&(*listaJugadores)->sig;
+    }
+}
