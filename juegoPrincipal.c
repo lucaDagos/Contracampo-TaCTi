@@ -260,14 +260,21 @@ void intercambiar( void * a, void* b, size_t sizeElem)
 
 int ingresarJugadores(tLista *listaJugadores){
     char jugador[MAX_NOMBRE];
+    char esjugador_invalido=0;
     int errores = 0;
     do{
         printf("Ingrese los nombres de los jugadores(ingrese 'c' para terminar con la carga):\n");
         scanf("%s", jugador);
+        while(esjugador_invalido==0 && strcmp(jugador, "c") == 0)
+        {
+            printf("Debe ingresar al menos un jugador para comenzar el juego):\n");
+            scanf("%s", jugador);
+        }
         if(strcmp(jugador, "c") == 0){
             return EXITO;
         }
         errores = insertarJugadorEnLista(listaJugadores, jugador);
+        esjugador_invalido=1;
     }while(errores == 0);
 
     if(errores > 0){
@@ -347,7 +354,7 @@ int modificarArchivoConfig(char nombreArch[20]){
                 leerCadena("Ingrese nueva URL: ", config.urlApi, sizeof(config.urlApi));
                 break;
             case 2:
-                leerCadena("Ingrese nuevo código de identificación: ", config.codIdenGrupo, sizeof(config.codIdenGrupo));
+                leerCadena("Ingrese nuevo cÃ³digo de identificaciÃ³n: ", config.codIdenGrupo, sizeof(config.codIdenGrupo));
                 break;
             case 3:
                 printf("Ingrese nueva cantidad de partidas: ");
@@ -357,7 +364,7 @@ int modificarArchivoConfig(char nombreArch[20]){
                 printf("Guardando cambios...\n");
                 break;
             default:
-                printf("Opción invalida\n");
+                printf("OpciÃ³n invalida\n");
         }
 
     } while(opcion != 0);
@@ -448,7 +455,7 @@ void convertirAMayusculas(char cadena[]){
     }
 }
 void menu( char decision[MAX_NOMBRE]){
-    printf("[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
+    printf("\n[A] Jugar \n[B] Ver ranking equipo \n[C] Salir \n");
     scanf("%s", decision);
     convertirAMayusculas(decision);
     while(validacionDecision(decision) == false){
