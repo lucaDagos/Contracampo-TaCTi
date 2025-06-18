@@ -13,8 +13,14 @@ Con la intención de que ests funcione, debe agregarse las librerias de C:
 --------------------------------------------------------------------------------------------------
 *Cambiar Configuración*
 
-con la intención de cambiar la configuración, se debe ingresar:
+Con la intención de cambiar la configuración, desde el menu se debe ingresar: "MODIFICARARCHIVO". (Esta opcion tiene laintención de evitar que cualquier jugador casual modifique de forma mal intensionada la configuración, de estamanera solo los usuarios con acceso a este instructivo podran modifcar la configuración).
 
+Esto abre un "menu secreto", el cual permite al usuario realizar las siguientes opciones:
+- Modicar la URL de la API: Permite modiifcar la url donde se guardaran los resultados.
+- Modificar el Codigo de identificacion: Esta opcion permite, como su nombre lo indica, modificar el codigo de identificación
+- Modificar la cantidad de partidad: Permine modificar la cantidad de partidad jugadas.
+
+finalmente, en caso de finalizar, se selecciona la opción : "0. Guardar y salir" y te devuelve al menu principal
 
 
 --------------------------------------------------------------------------------------------------
