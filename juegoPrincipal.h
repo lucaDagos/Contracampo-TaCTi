@@ -10,6 +10,7 @@
 
 #define MAX_NOMBRE 50
 #define HAY_ERROR 1
+#define ERROR 1
 #define EXITO 0
 #define COMIENZA_MAQUINA 0
 #define COMIENZA_JUGADOR 1
@@ -118,4 +119,5 @@ void enviarDatosListaAPI(tLista* listaJugadores, tConfiguracion* configuracion, 
 void leerCadena(char *cadena, char *destino, size_t tam);
 void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido);
 void menuSecreto();
+void muestraTableroGUI();
 #endif // JUEGOPRINCIPAL_H_INCLUDED
