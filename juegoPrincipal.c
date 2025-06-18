@@ -1,5 +1,4 @@
 #include "juegoPrincipal.h"
-#include "listaSimple.h"
 
 //esto es el contexto en una partida para evitar la repeticion en los parametros
 char simboloJugador;

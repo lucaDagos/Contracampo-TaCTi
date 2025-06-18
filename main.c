@@ -1,6 +1,6 @@
 #include "juegoPrincipal.h"
-#include "listaSimple.h"
-#include "informePartidas.h"
+#include "./primitivas/listaSimple.h"
+#include "./informes-funciones/informePartidas.h"
 int main()
 {
     setbuf(stdout, NULL); // Desactivar el buffer de salida, para la GUI

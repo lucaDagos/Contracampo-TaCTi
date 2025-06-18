@@ -5,8 +5,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include "listaSimple.h"
-#include "apiHeader.h"
+#include "./primitivas/listaSimple.h"
+#include "./api/apiHeader.h"
 
 #define MAX_NOMBRE 50
 #define HAY_ERROR 1
