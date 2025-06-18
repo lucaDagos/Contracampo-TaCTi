@@ -55,7 +55,7 @@ Finalmente, una vez que todos los jugadores hayan jugado, el archivo se envía a
 --------------------------------------
 [B] - Ver ranking equipo:
 
-Esta opción muestra el ranking del equipo, donde se ordena a los jugadores por puntaje total de mayor a menor.
+Esta opción muestra el ranking del equipo, donde se ordena a los jugadores por puntaje total de mayor a menor. Se muestran los 5 mejores puntajes del equipo.
 
 Se listan:
 -  ⁠Nombre del jugador
