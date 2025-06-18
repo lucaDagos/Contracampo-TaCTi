@@ -21,6 +21,15 @@ y ya con eso, podriamos usar el archivo bash que proporcionamos (jugar.sh) y cor
 
 y ya podriamos disfrutar del juego!
 
+Las dependencias del proyecto en cuanto a C son las siguientes:
+
+libcurl: para <curl/curl.h>
+- sudo apt-get install libcurl4-openssl-dev (Linux)
+
+build-essential: incluye gcc, g++, make, etc.
+
+- sudo apt-get install build-essential (Linux)
+
 Tambien proporcionamos un makefile, que nos permite compilar el codigo C de manera mas facil (si estas en clion o vscode, por ejemplo)
 
 cuenta con los comandos:
@@ -28,6 +37,8 @@ cuenta con los comandos:
 - make: compila el codigo C y genera el ejecutable "tateti"
 - make clean: elimina el ejecutable "tateti" y los archivos temporales generados durante la compilación
 - make run: compila el código C y ejecuta el programa, directamente desde la terminal
+
+Alternativamente, se puede compilar con
 
 --------------------------------------------------------------------------------------------------
 *Cambiar Configuración*
