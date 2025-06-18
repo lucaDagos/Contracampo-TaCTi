@@ -496,26 +496,12 @@ int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configurac
 }
 
 
-// Crea una lista (limitada) para el ranking
-int obtenerRanking(tLista* lista, tConfiguracion* configuracion){
-
-    CURLcode res;
-    tJugadorAPI jugador;
-    tRespuesta resAPI = {NULL, 0};
-    char pathGet[TAM_CADENA_ARCH];
-
-    snprintf(pathGet, sizeof(pathGet), "%s/%s", configuracion->urlApi, configuracion->codIdenGrupo);
-
-    res = peticionGET(&resAPI, pathGet);
-    if (res != CURLE_OK){
-        printf("Error en la solicitud a la API.\n");
-        return HAY_ERROR;
+//funcion que devuelve el tablero como array sin punteros
+// Función que devuelve una copia del tablero como array sin punteros
+void obtenerTablero(char destino[N][N]) {
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < N; j++) {
+            destino[i][j] = tablero[i][j];
+        }
     }
-    else{
-        while(parsearJugadores(&resAPI, &jugador))
-            insertarOrdenadoLimitado(lista, LIMITE_RANKING, &jugador, sizeof(tJugadorAPI), compararJugAPI);
-    }
-    free(resAPI.info);
-    return TODO_OK;
 }
-

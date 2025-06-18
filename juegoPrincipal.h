@@ -113,3 +113,12 @@ int obtenerDatosArchivoConfiguracion(char* ruta_arch, tConfiguracion* configurac
 
 
 #endif // JUEGOPRINCIPAL_H_INCLUDED
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
