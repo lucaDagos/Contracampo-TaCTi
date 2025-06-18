@@ -69,6 +69,7 @@ int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas){
 
     return jugador->puntaje;
 }
+
 void registrarPartida(tLista* listaPartidas, void* jugador, int puntajeObtenido){
 
     tPartida partida;
@@ -95,6 +96,7 @@ int calcularPuntaje(char posibleGanador){
     return PUNTAJE_EMPATE;
 
 }
+
 void asignarFicha(int quienEmpieza){
     if(quienEmpieza == COMIENZA_JUGADOR){
         simboloJugador = 'X';
@@ -274,21 +276,33 @@ int ingresarJugadores(tLista *listaJugadores){
     return EXITO;
 }
 
-int insertarJugadorEnLista(tLista *listaJugadores, char* jugador){
-    tNodo *nuevo = (tNodo*)malloc(sizeof(tNodo));
+int insertarJugadorEnLista(tLista *listaJugadores, char* nom_jug){
+    tJugador jugador;
+    strcpy(jugador.nombre, nom_jug);
+    jugador.puntaje = 0;
+
+    tNodo* nuevo = (tNodo*) malloc(sizeof(tNodo));
     if(!nuevo){
         printf("Error al asignar memoria para un nodo nuevo");
         return HAY_ERROR;
     }
-    nuevo->info = malloc(MAX_NOMBRE-1);
-    memcpy(nuevo->info, jugador, MAX_NOMBRE - 1);
-    nuevo->tamInfo = MAX_NOMBRE - 1;
+
+    nuevo->info = malloc(sizeof(tJugador));
+    if(!nuevo->info){
+        printf("Error al asignar memoria para la informacion del jugador");
+        return HAY_ERROR;
+    }
+
+    memcpy(nuevo->info, &jugador, sizeof(tJugador));
+    nuevo->tamInfo = sizeof(tJugador);
     nuevo->sig = NULL;
 
     while(*listaJugadores) {
         listaJugadores = &(*listaJugadores)->sig;
     }
+
     *listaJugadores = nuevo;
+
     return EXITO;
 }
 
@@ -450,6 +464,7 @@ bool validacionDecision(char decision[]){
     }else
         return false;
 }
+
 int compararPuntajeTotal(const void* a, const void* b){
 
     const tJugador* jugadorA = (const tJugador*)a;
