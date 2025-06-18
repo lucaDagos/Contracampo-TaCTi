@@ -12,14 +12,10 @@ make
 
 # 2. Ejecutar GUI en Python
 echo "🚀 Ejecutando GUI..."
-cd "$DIR/GUI"
-gcc GUI.c -o gui-app `pkg-config --cflags --libs gtk+-3.0`
-./gui-app
-
+python3 "GUI.py"
 
 
 # Limpiar después de cerrar GUI
 echo "🧹 Limpiando archivos temporales..."
-rm -rf "$DIR/GUI/gui-app"
 cd "$DIR"
 make clean
