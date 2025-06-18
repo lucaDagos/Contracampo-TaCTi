@@ -1,5 +1,4 @@
 #include "informePartidas.h"
-#include "juegoPrincipal.h"
 
 
 void registrarEnInformePuntosJugador(FILE* arch, int PuntosTotales){
@@ -41,7 +40,7 @@ int crearInformePartidas(tLista* listaJugadores, tLista* partidasJugadas, int ca
     time_t t = time(NULL);
     struct tm tiempoAct = *localtime(&t);
 
-    snprintf(nombreArch, sizeof(nombreArch), "./informes/informe-juego_%d-%02d-%02d-%02d-%02d.txt",
+    snprintf(nombreArch, sizeof(nombreArch), "informes/informe-juego_%d-%02d-%02d-%02d-%02d.txt",
              tiempoAct.tm_year + 1900, tiempoAct.tm_mon + 1, tiempoAct.tm_mday, tiempoAct.tm_hour, tiempoAct.tm_min);
 
     arch = fopen(nombreArch, "wt");
