@@ -43,7 +43,7 @@ class GameResultDialog(QDialog):
         self.timer = QTimer()
         self.timer.timeout.connect(self.accept)
         self.timer.setSingleShot(True)
-        self.timer.start(2000)  # Close after 2 seconds
+        self.timer.start(1000)  # Close after 2 seconds
 
 class RankingDialog(QDialog):
     def __init__(self, parent=None):
@@ -149,7 +149,7 @@ class PlayersWidget(QWidget):
         layout.addWidget(self.add_btn)
         self.list_widget = QListWidget(self)
         layout.addWidget(self.list_widget)
-        self.start_btn = QPushButton("Comenzar juego")
+        self.start_btn = QPushButton("Comenzar juego (C + Y)")
         layout.addWidget(self.start_btn)
 
         self.add_btn.clicked.connect(self.add_player)

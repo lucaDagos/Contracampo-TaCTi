@@ -6,11 +6,6 @@ char simboloJugador;
 char simboloMaquina;
 char tablero[TAM_TABLERO][TAM_TABLERO];
 
-//REINICIAR TABLERO DESPUES DE CADA PARTIDA
-///////////////////////////////////////////////////////////*///////////////////////////////////
-//--FUNCIONES PRINCIPALES
-/////////////////////////////////////////////////////////////////////////////////////////////*/
-
 int jugar(tLista* listaJugadores, tLista* listaPartidas, int cantPart){
 
     listaCrear(listaJugadores);
@@ -56,7 +51,7 @@ int comienzaAJugar(void* infoJugador, int cantPartidas, tLista* listaPartidas){
         for(int i =0; i < MAX_TURNOS && encontrarPosibleGanador() == ' '; i++){
             PtrFuncion turno = desencolar(&colaDeTurnos);
             if(turno == NULL){
-                return ERROR;
+                return HAY_ERROR;
             }
             turno();
             mostrarTablero();
@@ -184,6 +179,12 @@ int ponerRandomMaquina() {
     return MOV_REALIZADO;
 }
 bool puedeGanar(int* fila, int* columna, char ficha){
+  //Esto es simil un algoritmo de 'fuerza bruta' o backtracking
+  // basicamente, por que intentamos colocar una ficha en cada posicion vacia
+  // si eso genera una victoria, devolvemos la posicion, y true
+  // si no, seguimos buscando. Notar que es bastante poco eficiente, pero como estamos limitados al tablero
+  //del tateti (3x3), no hay problema de performance.
+  //Se nos ocurrio asi porque nos dejaba usar un monton de las funciones que ya teniamos hechas!
 
     for (int i = 0; i < TAM_TABLERO; i++)
     {
@@ -217,9 +218,8 @@ bool esIngresoValido(int fila, int columna){
 void colocarFicha( int fila, int columna, char ficha){
     tablero[fila][columna] = ficha;
 }
-///////////////////////////////////////////////////////////*///////////////////////////////////
-//--LOGICA DE TURNOS
-/////////////////////////////////////////////////////////////////////////////////////////////*/
+
+
 int barajarTurnos(tLista* lista){
     int cantJugadores = obtenerTamanioLista(lista);
     if(cantJugadores == 1 ){
@@ -227,7 +227,7 @@ int barajarTurnos(tLista* lista){
     }
     tNodo** vectorDeJugadores = malloc(cantJugadores * sizeof(tNodo));
     if(!vectorDeJugadores){
-        return ERROR;
+        return HAY_ERROR;
     }
     tNodo *actual = *lista;
     for(int i = 0; i < cantJugadores; i++){
@@ -259,9 +259,6 @@ void intercambiar( void * a, void* b, size_t sizeElem)
     free(temp);
 }
 
-///////////////////////////////////////////////////////////*///////////////////////////////////
-//--FUNCIONES CARGA DE JUGADORES
-/////////////////////////////////////////////////////////////////////////////////////////////*/
 
 int ingresarJugadores(tLista *listaJugadores){
     char jugador[MAX_NOMBRE];
@@ -318,14 +315,11 @@ int insertarJugadorEnLista(tLista *listaJugadores, char* nom_jug){
     return EXITO;
 }
 
-///////////////////////////////////////////////////////////*///////////////////////////////////
-//--LOGICA ARCHIVO CONFIGURACION
-/////////////////////////////////////////////////////////////////////////////////////////////*/
 int crearArchivoConfig(char nombreArch[20]){
     FILE *arch = fopen(nombreArch, "w");
     if(!arch){
         printf("Error al crear el archivo de configuracion\n");
-        return ERROR;
+        return HAY_ERROR;
     }
     tConfiguracion config;
 
@@ -343,7 +337,7 @@ int modificarArchivoConfig(char nombreArch[20]){
     FILE *arch = fopen(nombreArch, "r");
     if(!arch){
         printf("error al crear el archivo de configuracion\n");
-        return ERROR;
+        return HAY_ERROR;
     }
     tConfiguracion config;
     fscanf(arch, "%[^|]|", config.urlApi);
@@ -397,15 +391,15 @@ void menuSecreto(){
 void leerCadena(char *cadena, char *destino, size_t tam) {
     char aux[256];
     printf("%s", cadena);
+    fflush(stdin);
     if (fgets(aux, sizeof(aux), stdin)) {
         aux[strcspn(aux, "\n")] = '\0';
         strncpy(destino, aux, tam - 1);
         destino[tam - 1] = '\0';
     }
 }
-///////////////////////////////////////////////////////////*///////////////////////////////////
-//--FUNCIONES AUXILIARES
-/////////////////////////////////////////////////////////////////////////////////////////////*/
+
+
 bool jugadorEstaListo(){
     char respuesta;
     while (1) {
@@ -530,7 +524,7 @@ int estaVacia(tPila* pila){
 }
 int pushPila(tPila *pila, PtrMovInt funcion){
     if(estaLlena(pila)){
-        return ERROR;
+        return HAY_ERROR;
     }
     pila->info[++pila->tope] = funcion;
     return EXITO;
@@ -541,7 +535,7 @@ PtrMovInt popPila(tPila *pila){
     }
     return pila->info[pila->tope--];
 }
-///////////////////////////////////////////////////////////////////////
+
 void inicializarTablero(){
     for(int i = 0; i < TAM_TABLERO; i++){
         for(int j = 0; j < TAM_TABLERO; j++){
@@ -647,7 +641,6 @@ void enviarDatosListaAPI(tLista* listaJugadores, tConfiguracion* configuracion, 
 
 
 void muestraTableroGUI() {
-    // Esta función imprime el tablero en un formato amigable para la consola
     printf("['%c','%c','%c','%c','%c','%c','%c','%c','%c']\n",
     tablero[0][0], tablero[0][1], tablero[0][2],
            tablero[1][0], tablero[1][1], tablero[1][2],
